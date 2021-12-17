@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+		<meta http-equiv="Content-style-type" content="text/css" />
+		<meta http-equiv="Content-script-type" content="text/javascript" />
+		<meta http-equiv="Content-language" content="fr" />
+
+		<title>Carte Multicouches</title>
+
+		<link rel="icon" type="image/png" href="https://resources.tela-botanica.org/tb/img/16x16/favicon.png" />
+		<link rel="shortcut icon" type="image/x-icon" href="https://resources.tela-botanica.org/tb/img/16x16/favicon.ico" />
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link href="<?php echo $assets; ?>css/tb-map.css" rel="stylesheet" type="text/css" media="screen" />
+
+		<!-- lib -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script type="text/javascript">
+			//<![CDATA[
+				const assetsURL = '<?php echo $assets; ?>';
+				const zoom      = <?php echo $zoom; ?>;
+			//]]>
+		</script>
+		<script type="text/javascript" src="<?php echo $assets; ?>scripts/common.js"></script>
+		<script type="text/javascript" src="<?php echo $assets; ?>scripts/evenements.js"></script>
+		<script type="text/javascript" src="<?php echo $assets; ?>scripts/config.js"></script>
+		<script type="text/javascript" src="<?php echo $assets; ?>scripts/tb-map.js"></script>
+	</head>
+
+	<body>
+		<div id="loading-zone"></div>
+
+		<div id="map"></div>
+
+		<?php if(!empty($logo)) : ?>
+			<div id="logo">
+				<?php if(!empty($website_url)) : ?>
+				<a href="<?php echo $website_url; ?>" title="<?php echo $website_url; ?>" target="_blank">
+					<img height="60px" class="image-logo" src="<?php echo $logo; ?>" alt="logo" />
+				</a>
+				<?php else : ?>
+					<img class="image-logo" src="<?php echo $logo; ?>" alt="logo" />
+				<?php endif; ?>
+			</div>
+		<?php endif; ?>
+
+		<?php if($title !== "0" && !empty($title)) : ?>
+			<div id="title-zone" class="element-overlay">
+				<h1 id="map-title">
+					<span id="map-title-infos"><?php echo htmlspecialchars($title); ?></span>
+				</h1>
+			</div>
+		<?php endif; ?>
+
+        <div id="filters-zone"  class="element-overlay">
+            <form class="filters-form"></form>
+        </div>
+
+        <div id="marker-embedded-infos-zone"  class="element-overlay"></div>
+
+		<div id="tooltip" style="display:none;"></div>
+	</body>
+</html>
