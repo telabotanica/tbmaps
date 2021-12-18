@@ -8,4 +8,6 @@ errorLevel = 30719 ; E_ALL = 30719
 locale = "fr_FR.UTF-8"
 ; Indication du fuseau horraire par défaut date_default_timezone_set(?)pour les classes appelées par Widget.php
 timeZone = "Europe/Paris"
+; Application qui charge les cartographies
+mapName = "Tbmaps"
 ;*/?>
