@@ -1,14 +1,8 @@
-<files *.ini\.* >
-  order deny,allow
-  deny from all
-</files>
-
-#AddHandler x-httpd-php5 .php
 AddDefaultCharset UTF-8
-DirectoryIndex index.php
+DirectoryIndex index.html
 RewriteEngine On
 RewriteBase /
 # Redirections générale vers le fichier principal de Widget.
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^.*$ index.php
+RewriteRule ^.*$ index.html

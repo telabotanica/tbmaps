@@ -4,8 +4,18 @@
 
 /***** globals *****/
 
-const maxZoom = 18,
-	sourcesArray = sourceList.split(','),
+const osmFrTilesURL = 'https://osm.tela-botanica.org/tuiles/osmfr/{z}/{x}/{y}.png',
+	googleTilesURL = 'https://mt1.google.com/vt/lyrs=y@12345&hl=fr&src=app&x={x}&y={y}&z={z}',
+	reliefTilesURL = 'https://tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey=4517d3849db84acc8d4bb3b289084c75',
+	profileURL = `${baseUrlSite}wp-content/plugins/tela-botanica/profil-par-id.php?id=`,
+	defaultCoord = [46,2],
+	layerAttributions = {
+		osm: `Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors,
+		 <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>`,
+		google:`Map data &copy;${new Date().getFullYear()} <a href="https://maps.google.com">Google</a>`
+	},
+	maxZoom = 18,
+	defaultSource = 'evenements',
 	generateLayerOptions = layer => {
 		return {
 			attribution: layerAttributions[layer],
@@ -16,10 +26,19 @@ const maxZoom = 18,
 	osmLayer = new L.TileLayer(osmFrTilesURL, generateLayerOptions('osm')),
 	reliefLayer = new L.TileLayer(reliefTilesURL, generateLayerOptions('osm')),
 	satelliteLayer = new L.TileLayer(googleTilesURL, generateLayerOptions('google')),
-	markers = {};
+	markers = {},
+	expectedParams = [
+		'titre',
+		'logo',
+		'sources',
+		'zoom',
+		'url_site'
+	];
 
 var map = null,
+	zoom = 6,
 	source,
+	sourcesIdentifiers = [] ,
 	configSource,
 	sourceClassInstance,
 	isClosedPopupListener = false;
@@ -35,10 +54,37 @@ function TbMap() {
 }
 
 TbMap.prototype.init = function() {
-	this.initMap();
-	this.initControlPanel();
-	this.initSources();
-	this.initSourcesFilters();
+	this.getSourcesIdentifiers();
+	if(!!sourcesIdentifiers) {
+		this.initPage();
+		this.initMap();
+		this.initControlPanel();
+		this.initSources();
+		this.initSourcesFilters();
+	}
+};
+
+TbMap.prototype.getSourcesIdentifiers = function() {
+	if('sources' in urlParams &&  /^\w+(?:,\w+)?$/.test(urlParams.sources)) {
+		sourcesIdentifiers = urlParams.sources.split(',').filter(validSource);
+	}
+
+	if (!sourcesIdentifiers.length) {
+		sourcesIdentifiers = validSource(defaultSource) ? [defaultSource] : null;
+	}
+}
+
+TbMap.prototype.initPage = function() {
+	if ('titre' in urlParams) {
+		$('#map-title-infos').html(urlParams.titre);
+		$('#title-zone').removeClass('hidden');
+	}
+	if ('logo' in urlParams) {
+		$('#image-logo').prop('src', urlParams.logo);
+		// if a logo is requested, always disable default link to Tela Botanica
+		let newUrl = 'url_site' in urlParams? urlParams.url_site : '#';
+		$('#logo > a').prop('href', newUrl);
+	}
 };
 
 TbMap.prototype.initMap = function() {
@@ -48,6 +94,8 @@ TbMap.prototype.initMap = function() {
 	$(window).resize(function() {
 		lthis.resizeMap();
 	});
+
+	zoom = 'zoom' in urlParams && Number.isInteger(zoom) ? urlParams.zoom : 6;
 
 	map = L.map('map', {
 		center : new L.LatLng(...defaultCoord),
@@ -87,7 +135,7 @@ TbMap.prototype.addScaleControl = function() {
 
 TbMap.prototype.addSourceFilters = function() {
 	const lthis = this,
-		filterHtml = 1 < sourcesArray.length ? sourcesArray.forEach(lthis.addFiltersLayerGroup) : this.addFiltersLayerGroup(sourcesArray[0]);
+		filterHtml = 1 < sourcesIdentifiers.length ? sourcesIdentifiers.forEach(lthis.addFiltersLayerGroup) : this.addFiltersLayerGroup(sourcesIdentifiers[0]);
 
 	$('#filters-zone .filters-form').append(filterHtml);
 	$('#filters-zone .filters-form .category-filter').each((i, filter) => {
@@ -143,7 +191,8 @@ TbMap.prototype.addMapLayersControl = function() {
 };
 
 TbMap.prototype.addAroundMeButton = function() {
-	const aroundMe = new L.Control({position : 'topleft'});
+	const lthis = this,
+		aroundMe = new L.Control({position : 'topleft'});
 
 	aroundMe.onAdd = map => {
 		const button = L.DomUtil.create('button', 'button around-me');
@@ -161,7 +210,7 @@ TbMap.prototype.addAroundMeButton = function() {
 				lthis.addMarker({
 					title:'Vous êtes ici!',
 					coord: [position.coords.latitude,position.coords.longitude],
-					icon: imagesURL+'marker-icon-user.svg',
+					icon: imagesPath+'marker-icon-user.svg',
 					markerType: 'me',
 					zoom: 12
 				});
@@ -256,7 +305,7 @@ TbMap.prototype.addMarker = function(options) {
 TbMap.prototype.markerIconOptions = function(iconInfos) {
 	let returnedOptions = {
 		options: {
-			shadowUrl: imagesURL +'marker-shadow.png',
+			shadowUrl: imagesPath +'marker-shadow.png',
 			iconAnchor: new L.Point(12, 40),//correctly replaces the dot of the pointer
 			iconSize: new L.Point(24,40),
 			iconUrl: iconInfos.icon
@@ -287,7 +336,7 @@ TbMap.prototype.hidePopup = function() {
 TbMap.prototype.programMapRefresh = function() {
 	const lthis = this;
 
-	sourcesArray.forEach(originSource => {
+	sourcesIdentifiers.forEach(originSource => {
 		source = originSource;
 		configSource = sources[source];
 		$('#tooltip').css('display', 'none');
@@ -331,7 +380,7 @@ TbMap.prototype.displayLoadingMessage = function(element) {
 TbMap.prototype.tooltipLoadingTpl = function() {
 	return (
 		`<div id="loading-${configSource.selector}">
-			<img src="${imagesURL}loading.gif" alt="Chargement en cours..." style="width:10%;">
+			<img src="${imagesPath}loading.gif" alt="Chargement en cours..." style="width:10%;">
 			<p>Chargement des ${configSource.sourceName} en cours...</p>
 		</div>`
 	);
