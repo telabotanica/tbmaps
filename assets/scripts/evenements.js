@@ -6,13 +6,15 @@
 
 /* Source */
 
-sourceClasses['Evenements'] = Evenements;
+sourceClasses['Evenements'] = Evenements;// see Class Evenements() below
 
-sources.evenements = {
+sources.evenements = {// sources.['source name']
+	// required :
 	selector: 'events',
 	sourceInfosURL: `${baseUrlSite}evenements/`,
 	sourceName: 'évènements',
 	serviceURL: `${baseUrlSite}wp-json/wp/v2/posts?status=publish&categories=26,27,28,29&per_page=1000&order_by=modified&order=desc`,
+	// optionnal :
 	categories: {
 		'26': {
 			title: 'Congrès et conférences',
@@ -33,9 +35,15 @@ sources.evenements = {
 	}
 };
 
-/* Class */
+/* Class implementation */
+
 function Evenements() {}
 
+/*
+ * A method formating recieved data from source to display markers on map and informations in popups
+ * see Tbmaps.processSourceData()
+ */
+// method name formatData required
 Evenements.prototype.formatData = function(data) {
 	const lthis = this,
 		jsonData = tryParseJson(data),
@@ -86,6 +94,11 @@ Evenements.prototype.formatData = function(data) {
 	return returnData;
 };
 
+/*
+ * A templating method to display informations in popups
+ * see Tbmaps.initResponsivePopup(data)
+ */
+// method name popupTpl required
 Evenements.prototype.popupTpl = function(data) {
 	return (
 		`<div id="events" style="overflow:auto;">
@@ -126,6 +139,8 @@ Evenements.prototype.popupTpl = function(data) {
 	);
 };
 
+/***** optionnal implementation ******/
+
 Evenements.prototype.filterData = function(eventPostData) {
 	if(
 		!eventPostData.acf?.place ||
@@ -143,8 +158,6 @@ Evenements.prototype.filterData = function(eventPostData) {
 
 	return (regexpLng.test(place.latlng.lng) && regexpLat.test(place.latlng.lat))
 };
-
-/***** optionnal implementation ******/
 
 Evenements.prototype.parsePlace = function(placeData) {
 	return( !!placeData && 'object' === typeof placeData ) ? placeData : tryParseJson(placeData);
