@@ -6,7 +6,6 @@
 
 const osmFrTilesURL = 'https://osm.tela-botanica.org/tuiles/osmfr/{z}/{x}/{y}.png',
 	googleTilesURL = 'https://mt1.google.com/vt/lyrs=y@12345&hl=fr&src=app&x={x}&y={y}&z={z}',
-	reliefTilesURL = 'https://tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey=4517d3849db84acc8d4bb3b289084c75',
 	profileURL = `${baseUrlSite}wp-content/plugins/tela-botanica/profil-par-id.php?id=`,
 	defaultCoord = [46,2],
 	layerAttributions = {
@@ -24,7 +23,6 @@ const osmFrTilesURL = 'https://osm.tela-botanica.org/tuiles/osmfr/{z}/{x}/{y}.pn
 		};
 	},
 	osmLayer = new L.TileLayer(osmFrTilesURL, generateLayerOptions('osm')),
-	reliefLayer = new L.TileLayer(reliefTilesURL, generateLayerOptions('osm')),
 	satelliteLayer = new L.TileLayer(googleTilesURL, generateLayerOptions('google')),
 	markers = {},
 	expectedParams = [
@@ -106,7 +104,6 @@ TbMap.prototype.initMap = function() {
 		layers : [osmLayer]
 	});
 	satelliteLayer.addTo(map);
-	reliefLayer.addTo(map);
 	osmLayer.addTo(map);
 };
 
@@ -174,10 +171,8 @@ TbMap.prototype.addMapLayersControl = function() {
 	L.control.layers({
 		Plan : osmLayer,
 		Satellite : satelliteLayer,
-		Relief : reliefLayer
 	}).addTo(map);
 	osmLayer.bringToFront();
-	map.removeLayer(reliefLayer);
 	map.removeLayer(satelliteLayer);
 
 	// keep the osm map layer as default and selected
