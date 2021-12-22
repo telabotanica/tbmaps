@@ -1,4 +1,82 @@
 @charset "UTF-8";
+@font-face {
+ font-family:Muli;
+ src:url(fonts/muli-light-webfont.eot);
+ src:url(fonts/muli-light-webfont.eot?#iefix) format("embedded-opentype"),
+ url(fonts/muli-light-webfont.woff2) format("woff2"),
+ url(fonts/muli-light-webfont.woff) format("woff"),
+ url(fonts/muli-light-webfont.ttf) format("truetype");
+ font-weight:300;
+ font-style:normal;
+ font-display:fallback
+}
+@font-face {
+ font-family:Muli;
+ src:url(fonts/muli-regular-webfont.eot);
+ src:url(fonts/muli-regular-webfont.eot?#iefix) format("embedded-opentype"),
+ url(fonts/muli-regular-webfont.woff2) format("woff2"),
+ url(fonts/muli-regular-webfont.woff) format("woff"),
+ url(fonts/muli-regular-webfont.ttf) format("truetype");
+ font-weight:400;
+ font-style:normal;
+ font-display:fallback
+}
+@font-face {
+ font-family:Muli;
+ src:url(fonts/muli-bold-webfont.eot);
+ src:url(fonts/muli-bold-webfont.eot?#iefix) format("embedded-opentype"),
+ url(fonts/muli-bold-webfont.woff2) format("woff2"),
+ url(fonts/muli-bold-webfont.woff) format("woff"),
+ url(fonts/muli-bold-webfont.ttf) format("truetype");
+ font-weight:700;
+ font-style:normal;
+ font-display:fallback
+}
+@font-face {
+ font-family:Ubuntu;
+ src:url(fonts/ubuntu-bold-webfont.eot);
+ src:url(fonts/ubuntu-bold-webfont.eot?#iefix) format("embedded-opentype"),
+ url(fonts/ubuntu-bold-webfont.woff2) format("woff2"),
+ url(fonts/ubuntu-bold-webfont.woff) format("woff"),
+ url(fonts/ubuntu-bold-webfont.ttf) format("truetype");
+ font-weight:700;
+ font-style:normal;
+ font-display:swap
+}
+@font-face {
+ font-family:Ubuntu;
+ src:url(fonts/ubuntu-medium-webfont.eot);
+ src:url(fonts/ubuntu-medium-webfont.eot?#iefix) format("embedded-opentype"),
+ url(fonts/ubuntu-medium-webfont.woff2) format("woff2"),
+ url(fonts/ubuntu-medium-webfont.woff) format("woff"),
+ url(fonts/ubuntu-medium-webfont.ttf) format("truetype");
+ font-weight:500;
+ font-style:normal;
+ font-display:swap
+}
+@font-face {
+ font-family:Ubuntu;
+ src:url(fonts/ubuntu-regular-webfont.eot);
+ src:url(fonts/ubuntu-regular-webfont.eot?#iefix) format("embedded-opentype"),
+ url(fonts/ubuntu-regular-webfont.woff2) format("woff2"),
+ url(fonts/ubuntu-regular-webfont.woff) format("woff"),
+ url(fonts/ubuntu-regular-webfont.ttf) format("truetype");
+ font-weight:400;
+ font-style:normal;
+ font-display:swap
+}
+@font-face {
+ font-family:Ubuntu;
+ src:url(fonts/ubuntu-light-webfont.eot);
+ src:url(fonts/ubuntu-light-webfont.eot?#iefix) format("embedded-opentype"),
+ url(fonts/ubuntu-light-webfont.woff2) format("woff2"),
+ url(fonts/ubuntu-light-webfont.woff) format("woff"),
+ url(fonts/ubuntu-light-webfont.ttf) format("truetype");
+ font-weight:300;
+ font-style:normal;
+ font-display:swap
+}
+
 html {
 	overflow:hidden;
 }
@@ -8,7 +86,7 @@ body {
 	margin:0;
 	width:100%;
 	height:100%;
-	font-family:Muli,sans-serif;
+	font-family: Muli,sans-serif;
 	font-size:12px;
 	color: rgb(51, 51, 51);
 }
@@ -50,6 +128,10 @@ dd {
 	color: #929297;
 }
 
+.warning {
+	color: #e6885b!important;
+}
+
 .button.around-me {
 	position: absolute;
 	left: 50px;
@@ -77,6 +159,10 @@ dd {
 	-webkit-transition: background-color .2s ease;
 	-o-transition: background-color .2s ease;
 	transition: background-color .2s ease;
+}
+
+.button.around-me.warning {
+	background-image: url(../images/undo.svg);
 }
 
 .button:hover,
@@ -236,23 +322,63 @@ dd {
 
 /*+----------------------------------------------------------+*/
 
-#popup {
-	max-height: calc(100vw - 40px);
+#marker-embedded-infos-zone.visible {
+	display: block;
+	position: fixed;
+	z-index: 2000;
+	left:0;
+	right: 0;
+	top:0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+#marker-embedded-infos-zone.visible #popup {
+	position: absolute;
+	left:20px;
+	right: 20px;
+	top:20px;
+	bottom: 20px;
+	margin: auto;
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 2px;
+	box-shadow: -2px 2px 6px rgba(0,0,0,0.1);
+	height: max-content;
+	max-height: calc(100% - 80px);
+	max-width: 600px;
 	overflow: hidden;
 }
 
-#popup .close-popup {
-	display: none;
+#marker-embedded-infos-zone.visible .close-popup {
+	position: absolute;
+	top: 0;
+	right: 7px;
+	display: block;
+	z-index: 2001;
+	text-align: center;
+	width: 30px;
+	height: 30px;
+	font-size: 3rem;
+	color: #c3c3c3;
+	text-decoration: none;
+	font-weight: bold;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	pointer-events: auto;
 }
 
-#popup #events {
-	max-height: calc(100vw - 80px);
+#popup #events{
 	overflow: auto;
+	height: max-content;
+	max-height: calc(80vh - 40px);
 }
 
-#marker-embedded-infos-zone,
+#popup a.events-category-label,
 #popup a.website-button {
-	display: none;
+	display: inline-block;
+	font-size: 1rem;
 }
 
 #popup a.events-category-label {
@@ -262,12 +388,11 @@ dd {
 	fill: #918a6f;
 	font-size: 0.8rem;
 	font-weight: 400;
-	line-height: 1rem;
-	padding: 0.2rem 1rem;
 	text-decoration: none;
 	-webkit-transition: all .2s ease;
 	-o-transition: all .2s ease;
 	transition: all .2s ease;
+	padding: 0.2rem 1rem;
 }
 
 #popup a.events-category-label:hover,
@@ -277,24 +402,22 @@ dd {
 }
 
 #popup #events-footer {
-	clear: both;
-	display: flex;
-	justify-content: center;
 	width: 100%;
 }
 
 #popup a.website-button {
+	display: block;
 	background-color: #a2b93b;
-	border-radius: 0.2rem;
 	border: 0 none;
 	cursor: pointer;
 	color: #fff;
 	font-family: Ubuntu,sans-serif;
-	font-size: 0.8rem;
+	font-size: 1rem;
 	font-weight: 500;
 	letter-spacing: 0.1rem;
-	margin: 0 auto;
-	padding: 0.5rem 1.5rem;
+	margin: 0 -20px -20px;
+	width: 640px;
+	padding: 2rem 0;
 	text-align: center;
 	text-decoration: none;
 	text-transform: uppercase;
@@ -310,7 +433,7 @@ dd {
 
 #popup h2#events-title {
 	clear: left;
-	font-size: 0.8rem;
+	font-size: 1.2rem;
 	font-family: Ubuntu,sans-serif;
 	font-weight: 500;
 	margin: 0 0 1rem;
@@ -328,11 +451,11 @@ dd {
 	color: #6f2f11;
 }
 
-
 #popup .events-dates.float-left {
 	float: left;
+	width: 4rem;
 	margin-bottom: 1rem;
-	margin-right: 1rem;
+	margin-right: 2.5rem;
 }
 
 #popup .events-dates {
@@ -356,7 +479,7 @@ dd {
 	-webkit-box-direction: normal;
 	-ms-flex-direction: column;
 	flex-direction: column;
-	height: 2.5rem;
+	height: 3.5rem;
 	-webkit-box-pack: center;
 	-ms-flex-pack: center;
 	justify-content: center;
@@ -365,13 +488,13 @@ dd {
 }
 
 #popup .events-dates-day {
-	font-size: 1.2rem;
+	font-size: 1.5rem;
 	line-height: 1rem;
 	margin: 0.25rem 0 0.5rem;
 }
 
 #popup .events-dates-month {
-	font-size: 0.5rem;
+	font-size: 0.8rem;
 	letter-spacing: 0.1rem;
 	overflow: hidden;
 	text-transform: uppercase;
@@ -400,22 +523,34 @@ dd {
 	position: relative;
 }
 
+#popup h2.events-info-title::before,
+#popup dl.events-info-items,
 #popup #events-excerpt {
-	display: none;
+	display: block;
+}
+
+#popup #events-excerpt {
 	color: #333;
 	font-size: 1rem;
 }
 
+
+#popup .events-info {
+	padding-top: 0.1rem;
+}
+
+
 #popup .events-info,
 #popup .events-contact {
-	margin-top: 1rem;
-	margin-bottom: 1rem;
+	margin-top: 3rem;
+	margin-bottom: 3rem;
+	clear: both;
 }
 
 #popup h2.events-info-title {
 	color: #e16e38;
 	font-family: Ubuntu,sans-serif;
-	font-size: 1rem;
+	font-size: 1.5rem;
 	font-weight: 500;
 	position: relative;
 }
@@ -423,7 +558,6 @@ dd {
 #popup h2.events-info-title::before {
 	background: hsla(48,13%,50%,.2);
 	content: "";
-	display: none;
 	height: 1.5px;
 	position: absolute;
 	top: 50%;
@@ -438,9 +572,9 @@ dd {
 
 #popup dl.events-info-items {
 	line-height: 2.6rem;
-	display: inline-block;
+	margin-block-start: 1rem;
 	margin-block-end: 1rem;
-	width: 70%;
+	width: 100%;
 }
 
 #popup dt.events-info-item-title {
@@ -463,11 +597,11 @@ dd {
 	margin-left: 0;
 }
 
+
 #popup .events-contact {
 	-webkit-box-align: start;
 	-ms-flex-align: start;
 	align-items: flex-start;
-	border-bottom: 1px solid hsla(48,13%,50%,.2);
 	border-top: 1px solid hsla(48,13%,50%,.2);
 	display: -webkit-box;
 	display: -ms-flexbox;
@@ -513,7 +647,7 @@ dd {
 }
 
 #popup .events-contact-description {
-	display: none;
+	display: block;
 }
 
 #popup .events-contact-details {
@@ -542,6 +676,9 @@ dd {
 	background-color: rgba(0,105,121,.1);
 }
 
+
+/*********************************/
+
 @media (max-width: 768px) {
 	.button.around-me {
 		padding: 15px;
@@ -557,128 +694,5 @@ dd {
 		padding:5px;
 		font-size: 1rem;
 		background-color: rgba(255, 255, 255, 0.8);
-	}
-
-
-	#marker-embedded-infos-zone.visible {
-		display: block;
-		position: fixed;
-		z-index: 2000;
-		left:0;
-		right: 0;
-		top:0;
-		bottom: 0;
-		background-color: transparent;
-	}
-
-	#marker-embedded-infos-zone.visible #popup {
-		position: absolute;
-		left:20px;
-		right: 20px;
-		top:20px;
-		bottom: 20px;
-		margin: auto;
-		background-color: #fff;
-		padding: 20px;
-		border-radius: 2px;
-		box-shadow: -2px 2px 6px rgba(0,0,0,0.1);
-		max-height: calc(100% - 40px);
-		overflow: hidden;
-	}
-
-	#marker-embedded-infos-zone.visible #popup #events{
-		overflow: auto;
-		max-height: 100%;
-	}
-
-	#marker-embedded-infos-zone.visible .close-popup {
-		position: absolute;
-		top: 0;
-		right: 7px;
-		display: block;
-		z-index: 2001;
-		text-align: center;
-		width: 20px;
-		height: 20px;
-		font-size: 2rem;
-		color: #c3c3c3;
-		text-decoration: none;
-		font-weight: bold;
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		pointer-events: auto;
-	}
-
-	#marker-embedded-infos-zone a.events-category-label,
-	#marker-embedded-infos-zone a.website-button {
-		display: inline-block;
-		font-size: 1rem;
-	}
-
-	#marker-embedded-infos-zone a.events-category-label {
-		line-height: 1.5rem;
-		padding: 0.2rem 1.5rem;
-	}
-
-	#marker-embedded-infos-zone a.website-button {
-		padding: 0.8rem 2rem;
-	}
-
-	#marker-embedded-infos-zone h2#events-title {
-		font-size: 1.2rem;
-	}
-
-	#marker-embedded-infos-zone .events-dates.float-left {
-		margin-right: 2.5rem;
-		width: 4rem;
-	}
-
-	#marker-embedded-infos-zone .events-dates-item {
-		height: 3.5rem;
-	}
-
-	#marker-embedded-infos-zone .events-dates-day {
-		font-size: 1.5rem;
-	}
-
-	#marker-embedded-infos-zone .events-dates-month {
-		font-size: 0.8rem;
-	}
-
-	#marker-embedded-infos-zone .events-info,
-	#marker-embedded-infos-zone .events-contact {
-		margin-top: 3rem;
-		margin-bottom: 3rem;
-		clear: both;
-	}
-
-	#marker-embedded-infos-zone .events-info {
-		padding-top: 0.1rem;
-	}
-
-	#marker-embedded-infos-zone h2.events-info-title::before,
-	#marker-embedded-infos-zone dl.events-info-items,
-	#marker-embedded-infos-zone #events-excerpt {
-		display: block;
-	}
-
-	#marker-embedded-infos-zone h2.events-info-title {
-		font-size: 1.5rem;
-	}
-
-	#marker-embedded-infos-zone dl.events-info-items {
-		width: 100%;
-		margin-block-start: 1rem;
-	}
-
-	#marker-embedded-infos-zone .events-contact-description {
-		display: block;
-	}
-
-	#marker-embedded-infos-zone .events-contact {
-		padding: 15px 0;
-		position: relative;
-		width: 100%;
 	}
 }
