@@ -9,9 +9,9 @@ const osmFrTilesURL = 'https://osm.tela-botanica.org/tuiles/osmfr/{z}/{x}/{y}.pn
 	profileURL = `${baseUrlSite}wp-content/plugins/tela-botanica/profil-par-id.php?id=`,
 	defaultCoord = [46,2],
 	layerAttributions = {
-		osm: `Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors,
-		 <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>`,
-		google:`Map data &copy;${new Date().getFullYear()} <a href="https://maps.google.com">Google</a>`
+		osm: `Map data &copy; <a href="https://openstreetmap.org" target="_blank">OpenStreetMap</a> contributors,
+		 <a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC-BY-SA</a>`,
+		google:`Map data &copy;${new Date().getFullYear()} <a href="https://maps.google.com" target="_blank">Google</a>`
 	},
 	maxZoom = 18,
 	defaultSource = 'evenements',

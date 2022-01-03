@@ -102,9 +102,9 @@ Evenements.prototype.formatData = function(data) {
 Evenements.prototype.popupTpl = function(data) {
 	return (
 		`<div id="events" style="overflow:auto;">
-			<a class="events-category-label" href="${data.categoryURL}/" rel="category" title="${data.category}">${data.category}</a>
+			<a class="events-category-label" href="${data.categoryURL}/" rel="category" title="${data.category}" target="_parent">${data.category}</a>
 			<h2 id="events-title">
-				<a href="${data.link}">${data.title}</a>
+				<a href="${data.link}" target="_parent">${data.title}</a>
 			</h2>
 			<div class="events-dates float-left" title="${data.endDate ?`Du`:`Le`}&nbsp;${data.date}${data.endDate ? `&nbsp;au ${data.endDate}`:""}">
 				<time class="events-dates-item" datetime="${data.formatedStartDate.dateString}"><div class="events-dates-day">${data.formatedStartDate.localDateString[0]}</div><div class="events-dates-month">${data.formatedStartDate.localDateString[1]}</div></time>
@@ -126,14 +126,14 @@ Evenements.prototype.popupTpl = function(data) {
 					<div class="events-contact-name">${data.contact.name}</div>
 					<div class="events-contact-description">${data.contact.description}</div>
 					<ul class="events-contact-details">
-						<li><a href="tel:${data.contact.phone}" class="events-contact-phone">${data.contact.phone}</a></li>
-						<li><a href="mailto:${data.contact.email}" class="events-contact-email">${data.contact.email}</a></li>
-						<li><a href="${data.contact.website}" rel="noopener noreferrer" class="events-contact-website">${data.contact.website}</a></li>
+						<li><a href="tel:${data.contact.phone}" class="events-contact-phone" target="_parent">${data.contact.phone}</a></li>
+						<li><a href="mailto:${data.contact.email}" class="events-contact-email" target="_parent">${data.contact.email}</a></li>
+						<li><a href="${data.contact.website}" rel="noopener noreferrer" class="events-contact-website" target="_parent">${data.contact.website}</a></li>
 					</ul>
 				</div>
 			</div>
 		</div>
-		<a class="website-button" href="${data.link}">Consulter l'évènement</a>`
+		<a class="website-button" href="${data.link}" target="_parent">Consulter l'évènement</a>`
 	);
 };
 
