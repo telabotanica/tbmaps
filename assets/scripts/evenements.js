@@ -96,7 +96,7 @@ Evenements.prototype.formatData = function(data) {
 
 /*
  * A templating method to display informations in popups
- * see Tbmaps.initResponsivePopup(data)
+ * see Tbmaps.displayPopup()
  */
 // method name popupTpl required
 Evenements.prototype.popupTpl = function(data) {
@@ -104,7 +104,7 @@ Evenements.prototype.popupTpl = function(data) {
 		`<div id="events" style="overflow:auto;">
 			<a class="events-category-label" href="${data.categoryURL}/" rel="category" title="${data.category}">${data.category}</a>
 			<h2 id="events-title">
-				<a href="${data.link}" target="_blank">${data.title}</a>
+				<a href="${data.link}">${data.title}</a>
 			</h2>
 			<div class="events-dates float-left" title="${data.endDate ?`Du`:`Le`}&nbsp;${data.date}${data.endDate ? `&nbsp;au ${data.endDate}`:""}">
 				<time class="events-dates-item" datetime="${data.formatedStartDate.dateString}"><div class="events-dates-day">${data.formatedStartDate.localDateString[0]}</div><div class="events-dates-month">${data.formatedStartDate.localDateString[1]}</div></time>
@@ -121,21 +121,19 @@ Evenements.prototype.popupTpl = function(data) {
 				</dl>
 			</div>
 			<div class="events-contact">
-				<div class="events-contact-image" style="background-image: url(${data.contactImage ?? `${imagesPath}mail-icon.svg`});background-size:${data.contactImage ? 'cover':'30%'}"></div>
+				${data.contactImage ? `<div class="events-contact-image" style="background-image: url(${data.contactImage});background-size:cover"></div>`:''}
 				<div class="events-contact-text">
 					<div class="events-contact-name">${data.contact.name}</div>
 					<div class="events-contact-description">${data.contact.description}</div>
 					<ul class="events-contact-details">
 						<li><a href="tel:${data.contact.phone}" class="events-contact-phone">${data.contact.phone}</a></li>
 						<li><a href="mailto:${data.contact.email}" class="events-contact-email">${data.contact.email}</a></li>
-						<li><a href="${data.contact.website}" target="_blank" rel="noopener noreferrer" class="events-contact-website">${data.contact.website}</a></li>
+						<li><a href="${data.contact.website}" rel="noopener noreferrer" class="events-contact-website">${data.contact.website}</a></li>
 					</ul>
 				</div>
 			</div>
-			<div id="events-footer">
-				<a class="website-button" target="_blank" href="${data.link}">Consulter l'évènement</a>
-			</div>
-		</div>`
+		</div>
+		<a class="website-button" href="${data.link}">Consulter l'évènement</a>`
 	);
 };
 

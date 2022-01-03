@@ -39,7 +39,9 @@ var map = null,
 	sourcesIdentifiers = [] ,
 	configSource,
 	sourceClassInstance,
-	isClosedPopupListener = false;
+	isLocated = false,
+	markerMe = null,
+	positionBeforeLocateMe = null;
 
 /***** App class & methods *****/
 
@@ -101,7 +103,16 @@ TbMap.prototype.initMap = function() {
 		minZoom : 4,
 		maxBounds : [[-85.0, -180.0], [85.0, 180.0]],
 		maxZoom: maxZoom,
-		layers : [osmLayer]
+		layers : [osmLayer],
+		gestureHandling: true,
+		gestureHandlingOptions: {
+			text: {
+				touch: "Utilisez deux doigts pour déplacer la carte",
+				scroll: "Vous pouvez zoomer sur la carte à l'aide de CTRL + Molette de défilement",
+				scrollMac: "Vous pouvez zoomer sur la carte à l'aide de \u2318 + Molette de défilement"
+			},
+			duration: 1000
+		}
 	});
 	satelliteLayer.addTo(map);
 	osmLayer.addTo(map);
@@ -187,34 +198,69 @@ TbMap.prototype.addMapLayersControl = function() {
 
 TbMap.prototype.addAroundMeButton = function() {
 	const lthis = this,
-		aroundMe = new L.Control({position : 'topleft'});
-
+		aroundMe = new L.Control({position : 'topleft'}),
+		// toggle button locate/forget me
+		setArroundMeButton = (button, doLocate = true) => {
+			if(doLocate) {
+				positionBeforeLocateMe = null;
+				button.setAttribute('title','Autour de moi');
+				button.innerHTML = '<span class="locate-me">Autour&nbsp;de&nbsp;moi</span>';
+				button.classList.remove('warning');
+				if(markerMe) {
+					map.removeLayer(markerMe);
+					markerMe = null;
+				}
+			} else {
+				button.setAttribute('title','Revenir à la position précédente');
+				button.innerHTML = '<span class="forget-me">Oublier&nbsp;ma&nbsp;position</span>';
+				button.classList.add('warning');
+			}
+		};
+	// set button on map
 	aroundMe.onAdd = map => {
 		const button = L.DomUtil.create('button', 'button around-me');
 
-		button.setAttribute('title','Autour de moi');
-		button.innerHTML = '<span>Autour&nbsp;de&nbsp;moi</span>';
-
+		setArroundMeButton(button);
 		return button;
 	};
 	map.addControl(aroundMe);
 
 	aroundMe._container.onclick = function() {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(position => {
-				lthis.addMarker({
-					title:'Vous êtes ici!',
-					coord: [position.coords.latitude,position.coords.longitude],
-					icon: imagesPath+'marker-icon-user.svg',
-					markerType: 'me',
-					zoom: 12
+		const button = this;
+
+		if(!positionBeforeLocateMe) {
+			if (navigator.geolocation) {
+				positionBeforeLocateMe = map.getCenter();
+
+				// ask user and set position on map and switch button to "forget my position"
+				navigator.geolocation.getCurrentPosition(position => {
+					lthis.addMarker({
+						title:'Vous êtes ici!',
+						coord: [position.coords.latitude,position.coords.longitude],
+						icon: imagesPath+'marker-icon-user.svg',
+						markerType: 'me',
+						zoom: 12
+					});
+					setArroundMeButton(button, false);
+
+					// reset button if user moves the map far from his position (around me marker out of view)
+					map.on('movestart', function(e) {
+						if(isLocated && markerMe && !map.getBounds().contains(markerMe.getLatLng())){
+							setArroundMeButton(button);
+						}
+					})
 				});
-			});
+			} else {
+				console.log('Geolocation is not supported by this browser.');
+			}
 		} else {
-			console.log('Geolocation is not supported by this browser.');
+			// set user position on map and switch button to "forget my position"
+			if(positionBeforeLocateMe) {
+				map.panTo(positionBeforeLocateMe);
+			}
+			map.setZoom(zoom);
+			setArroundMeButton(button);
 		}
-		this.disabled = true;
-		this.classList.add('disabled');
 	};
 };
 
@@ -281,6 +327,7 @@ TbMap.prototype.addMarker = function(options) {
 	marker.on('mouseout', () => $('#tooltip').css('display', 'none'));
 	if('me' === type) {
 		map.setView(latlng, zoomFocusBack);
+		markerMe = marker;
 	} else {
 		marker.on('click', this.displayPopup.bind(this));
 		category = `${options.categoryId}` || options.markerType;
@@ -420,81 +467,32 @@ TbMap.prototype.displayTooltip = function(responseText, point) {
 
 TbMap.prototype.displayPopup = function(e) {
 	const lthis = this,
-		data = e.target;
-
-	this.initResponsivePopup(data);
-	$(window).resize(function() {
-		if(!isClosedPopupListener) {
-			lthis.initResponsivePopup(data);
-		}
-	});
-};
-
-TbMap.prototype.initResponsivePopup = function(data) {
-	const lthis = this,
-		latlng = new L.LatLng(data.getLatLng().lat, data.getLatLng().lng),
-		popupHtml =
-			`<div id="popup">
-				<button class="close-popup">×</button>
-				${sourceClassInstance.popupTpl(data.options.feature)}
-			</div>`,
-		removePreviousPopupHTML = () => {
+		data = e.target,
+		removePopupHTML = () => {
 			if(0 < $('#marker-embedded-infos-zone #popup').length) {
 				$('#marker-embedded-infos-zone #popup').remove();
 			}
 		},
-		closeResponsivePopup = () => {
-			$('#marker-embedded-infos-zone').removeClass('visible');
-			removePreviousPopupHTML();
-		};
+		latlng = new L.LatLng(data.getLatLng().lat, data.getLatLng().lng);
 
-	if(!!map) {
-		if (window.matchMedia('(max-width: 768px)').matches) {
-			/* the viewport is less than or exactly 768px wide */
-			removePreviousPopupHTML();
-			$('#marker-embedded-infos-zone').append(popupHtml);
-			$('#marker-embedded-infos-zone').addClass('visible');
-			map.panTo(latlng);
-			isClosedPopupListener = false;
-			$('#marker-embedded-infos-zone .close-popup').on('click', function(evt) {
-				closeResponsivePopup();
-				isClosedPopupListener = true;
-				if(!!lthis.popup && map.hasLayer(lthis.popup)) {
-					map.removeLayer(lthis.popup);
-				}
-				lthis.popup = null;
-			});
-		} else {
-			const popupOptions = {
-				closeButton: true,
-				autoPan: false,
-				maxWidth : 200
-			};
+	removePopupHTML();
+	$('#marker-embedded-infos-zone').append(
+		`<div id="popup">
+			<button class="close-popup">×</button>
+			${sourceClassInstance.popupTpl(data.options.feature)}
+		</div>`
+	);
+	$('#marker-embedded-infos-zone').addClass('visible');
+	map.panTo(latlng);
 
-			/* the viewport is more than 768px wide */
-			this.popup = new L.Popup(popupOptions);
-			this.popup.setLatLng(latlng);
-			this.popup.setContent(popupHtml);
-			this.popup.openOn(map);
-			isClosedPopupListener = false;
-			this.recenterMapOnPopup();
-			closeResponsivePopup();
-			$('.leaflet-popup-close-button').on('click', function(e) {
-				isClosedPopupListener = true;
-			});
+	$('#marker-embedded-infos-zone .close-popup').on('click', function() {
+		$('#marker-embedded-infos-zone').removeClass('visible');
+		removePopupHTML();
+		if(!!lthis.popup && map.hasLayer(lthis.popup)) {
+			map.removeLayer(lthis.popup);
 		}
-	}
-};
-
-// Make sure the popup is readable
-TbMap.prototype.recenterMapOnPopup = function() {
-	if (!!map._popup) {
-		const px = map.project(map._popup._latlng); // find the pixel location on the map where the popup anchor is
-
-		px.y -= map._popup._container.clientHeight/1.5; // find the height of the popup container, divide by 1.5, subtract from the Y axis of marker location
-		map.panTo(map.unproject(px),{animate: true}); // pan to new center
-	}
-	$('.leaflet-popup-scrolled').css('overflow', 'visible');
+		lthis.popup = null;
+	});
 };
 
 TbMap.prototype.processSourceData = function() {
