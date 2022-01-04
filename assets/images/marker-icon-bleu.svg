@@ -5,11 +5,11 @@
 <g>
 	<defs>
 		<linearGradient id="grad" x1="0%" y1="100%" x2="0%" y2="0%">
-			<stop offset="0%" style="stop-color:#B1E1E9;stop-opacity:1" />
-			<stop offset="100%" style="stop-color:#009FB8;stop-opacity:1" />
+			<stop offset="0%" style="stop-color:#00c1de;stop-opacity:1" />
+			<stop offset="100%" style="stop-color:#006979;stop-opacity:1" />
 		</linearGradient>
 	</defs>
-	<path fill="url(#grad)"  stroke="#009FB8" stroke-width="2" stroke-opacity="0.5" d="M182.9,551.7c0,0.1,0.2,0.3,0.2,0.3S358.3,283,358.3,194.6c0-130.1-88.8-186.7-175.4-186.9   C96.3,7.9,7.5,64.5,7.5,194.6c0,88.4,175.3,357.4,175.3,357.4S182.9,551.7,182.9,551.7z"/>
-	<path fill="#FFFFFF"  opacity="0.5" stroke="#009FB8" stroke-width="2" stroke-opacity="0.5" d="M122.2,187.2c0-33.6,27.2-60.8,60.8-60.8   c33.6,0,60.8,27.2,60.8,60.8S216.5,248,182.9,248C149.4,248,122.2,220.8,122.2,187.2z"/>
+	<path fill="url(#grad)"  stroke="#00525e" stroke-width="2" stroke-opacity="0.5" d="M182.9,551.7c0,0.1,0.2,0.3,0.2,0.3S358.3,283,358.3,194.6c0-130.1-88.8-186.7-175.4-186.9   C96.3,7.9,7.5,64.5,7.5,194.6c0,88.4,175.3,357.4,175.3,357.4S182.9,551.7,182.9,551.7z"/>
+	<path fill="#FFFFFF"  opacity="0.5" stroke="#00525e" stroke-width="2" stroke-opacity="0.5" d="M122.2,187.2c0-33.6,27.2-60.8,60.8-60.8   c33.6,0,60.8,27.2,60.8,60.8S216.5,248,182.9,248C149.4,248,122.2,220.8,122.2,187.2z"/>
 </g>
 </svg>

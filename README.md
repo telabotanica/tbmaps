@@ -30,7 +30,7 @@ I recommend to copy the _evenements.js_ code and adapt, **you have to implement 
 - Maybe adapt the code in tb-maps.js if necessary
 - Add some css in [_asset/css/[your source].css_](assets/css/)
 
-* _If you expect iframe integration of the app, remember that links in `a` tags will open inside the iframe, unless you add them `target="_blank"` or `target="_parent"` attribute._
+* _If you expect iframe integration of the app, remember that links in `<a>` tags will open inside the iframe, unless you add them `target=""` attribute with `_blank` or `_parent` or `_top` value._
 
 ## Default source
 

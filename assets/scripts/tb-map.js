@@ -14,6 +14,7 @@ const osmFrTilesURL = 'https://osm.tela-botanica.org/tuiles/osmfr/{z}/{x}/{y}.pn
 		google:`Map data &copy;${new Date().getFullYear()} <a href="https://maps.google.com" target="_blank">Google</a>`
 	},
 	maxZoom = 18,
+	defaultZoom = 6,
 	defaultSource = 'evenements',
 	generateLayerOptions = layer => {
 		return {
@@ -33,24 +34,22 @@ const osmFrTilesURL = 'https://osm.tela-botanica.org/tuiles/osmfr/{z}/{x}/{y}.pn
 		'url_site'
 	];
 
-var map = null,
-	zoom = 6,
+let map = null,
 	source,
 	sourcesIdentifiers = [] ,
 	configSource,
 	sourceClassInstance,
-	isLocated = false,
 	markerMe = null,
 	positionBeforeLocateMe = null;
 
 /***** App class & methods *****/
 
 function TbMap() {
-	this.popup = null;
-	this.timer = null;
-	this.loadPointsRequest = null;
-	this.$loadZone = $('#loading-zone');
 	this.url = '';
+	this.$loadZone = $('#loading-zone');
+	this.loadPointsRequest = null;
+	this.timer = null;
+	this.zoom = defaultZoom;
 }
 
 TbMap.prototype.init = function() {
@@ -70,9 +69,10 @@ TbMap.prototype.getSourcesIdentifiers = function() {
 	}
 
 	if (!sourcesIdentifiers.length) {
+		// check if all required default values exist (may have been mistakenly deleted if not needed)
 		sourcesIdentifiers = validSource(defaultSource) ? [defaultSource] : null;
 	}
-}
+};
 
 TbMap.prototype.initPage = function() {
 	if ('titre' in urlParams) {
@@ -82,7 +82,7 @@ TbMap.prototype.initPage = function() {
 	if ('logo' in urlParams) {
 		$('#image-logo').prop('src', urlParams.logo);
 		// if a logo is requested, always disable default link to Tela Botanica
-		let newUrl = 'url_site' in urlParams? urlParams.url_site : '#';
+		let newUrl = 'url_site' in urlParams ? urlParams.url_site : '#';
 		$('#logo > a').prop('href', newUrl);
 	}
 };
@@ -95,11 +95,11 @@ TbMap.prototype.initMap = function() {
 		lthis.resizeMap();
 	});
 
-	zoom = 'zoom' in urlParams && Number.isInteger(zoom) ? urlParams.zoom : 6;
+	this.zoom = undefined !== urlParams && Number.isInteger(urlParams.zoom) ? urlParams.zoom : defaultZoom;
 
 	map = L.map('map', {
 		center : new L.LatLng(...defaultCoord),
-		zoom : zoom,
+		zoom : this.zoom,
 		minZoom : 4,
 		maxBounds : [[-85.0, -180.0], [85.0, 180.0]],
 		maxZoom: maxZoom,
@@ -119,12 +119,14 @@ TbMap.prototype.initMap = function() {
 };
 
 TbMap.prototype.resizeMap = function() {
-	$('#map').height($(window).height());
-	$('#map').width($(window).width());
+	const $map = $('#map');
+	$map.height($(window).height());
+	$map.width($(window).width());
 };
 
 TbMap.prototype.initControlPanel = function() {
 	this.addScaleControl();
+	this.addFullscreenControl();
 	this.addSourceFilters();
 	this.addMapLayersControl();
 	this.addAroundMeButton();
@@ -141,12 +143,17 @@ TbMap.prototype.addScaleControl = function() {
 	map.addControl(new L.Control.Scale(scaleOptions));
 };
 
+TbMap.prototype.addFullscreenControl = function() {
+	map.addControl(new L.Control.Fullscreen().setPosition('topleft'));
+};
+
 TbMap.prototype.addSourceFilters = function() {
 	const lthis = this,
-		filterHtml = 1 < sourcesIdentifiers.length ? sourcesIdentifiers.forEach(lthis.addFiltersLayerGroup) : this.addFiltersLayerGroup(sourcesIdentifiers[0]);
+		filterHtml = 1 < sourcesIdentifiers.length ? sourcesIdentifiers.forEach(lthis.addFiltersLayerGroup) : this.addFiltersLayerGroup(sourcesIdentifiers[0]),
+		$filters = $('#filters-zone .filters-form');
 
-	$('#filters-zone .filters-form').append(filterHtml);
-	$('#filters-zone .filters-form .category-filter').each((i, filter) => {
+	$filters.append(filterHtml);
+	$('.category-filter', $filters).each((i, filter) => {
 		const span = $(filter).find('span'),
 			SourceFilter = span.data('source'),
 			categoryFilter = span.data('category');
@@ -159,10 +166,10 @@ TbMap.prototype.addFiltersLayerGroup = function(layerSource) {
 	source = layerSource;
 
 	let radioOverlayMaps =
-		`<h4>Filtrer les ${capitalizeFirstLetter(source)}</h4>
+		`<h4>Filtrer les ${sources[source].sourceName}</h4>
 		<label class="source-filter">
-			<input type="radio" class="input-filtes filter-${source}-all" name="layers-${source}" data-source="${source}" data-category="all">
-			<span class="source-filter-label" data-source="${source}" data-category="all">${capitalizeFirstLetter(source)}</span>
+			<input type="radio" class="input-filters filter-${source}-all" name="layers-${source}" data-source="${source}" data-category="all">
+			<span class="source-filter-label" data-source="${source}" data-category="all">Tous</span>
 		</label>`;
 
 	if(!!sources[source].categories) {
@@ -170,7 +177,7 @@ TbMap.prototype.addFiltersLayerGroup = function(layerSource) {
 
 		Object.keys(categories).forEach(id => radioOverlayMaps +=
 			`<label class="category-filter">
-				<input type="radio" class="input-filtes filter-${source}-${id}" name="layers-${source}" data-source="${source}" data-category="${id}">
+				<input type="radio" class="input-filters filter-${source}-${id}" name="layers-${source}" data-source="${source}" data-category="${id}">
 				<span class="source-filter-label" data-source="${source}" data-category="${id}">${categories[id].title}</span>
 			</label>`
 		);
@@ -200,7 +207,7 @@ TbMap.prototype.addAroundMeButton = function() {
 	const lthis = this,
 		aroundMe = new L.Control({position : 'topleft'}),
 		// toggle button locate/forget me
-		setArroundMeButton = (button, doLocate = true) => {
+		setAroundMeButton = (button, doLocate = true) => {
 			if(doLocate) {
 				positionBeforeLocateMe = null;
 				button.setAttribute('title','Autour de moi');
@@ -220,7 +227,7 @@ TbMap.prototype.addAroundMeButton = function() {
 	aroundMe.onAdd = map => {
 		const button = L.DomUtil.create('button', 'button around-me');
 
-		setArroundMeButton(button);
+		setAroundMeButton(button);
 		return button;
 	};
 	map.addControl(aroundMe);
@@ -241,12 +248,12 @@ TbMap.prototype.addAroundMeButton = function() {
 						markerType: 'me',
 						zoom: 12
 					});
-					setArroundMeButton(button, false);
+					setAroundMeButton(button, false);
 
 					// reset button if user moves the map far from his position (around me marker out of view)
 					map.on('movestart', function(e) {
-						if(isLocated && markerMe && !map.getBounds().contains(markerMe.getLatLng())){
-							setArroundMeButton(button);
+						if(markerMe && !map.getBounds().contains(markerMe.getLatLng())){
+							setAroundMeButton(button);
 						}
 					})
 				});
@@ -258,14 +265,14 @@ TbMap.prototype.addAroundMeButton = function() {
 			if(positionBeforeLocateMe) {
 				map.panTo(positionBeforeLocateMe);
 			}
-			map.setZoom(zoom);
-			setArroundMeButton(button);
+			map.setZoom(lthis.zoom);
+			setAroundMeButton(button);
 		}
 	};
 };
 
 TbMap.prototype.initSourcesFilters = function() {
-	$('.input-filtes').each((i, input) => {
+	$('.input-filters').each((i, input) => {
 		input.checked = 0 === i;
 		input.onclick = this.filterSource.bind(this);
 	});
@@ -275,10 +282,7 @@ TbMap.prototype.filterSource = function(evt) {
 	const lthis = this,
 		input = evt.target,
 		sourceFilter = input.dataset.source,
-		dataFilter = input.dataset.category,
-		isChecked = 'on' === input.value;
-	let options = {},
-		removed = [];
+		dataFilter = input.dataset.category;
 
 	$.each(markers, (index,v) => {
 		v.forEach(markersInfos => {
@@ -313,24 +317,26 @@ TbMap.prototype.addMarker = function(options) {
 		type = options.markerType || '',
 		iconOptions = this.markerIconOptions(options),
 		icon = L.Icon.extend(iconOptions),
-		zoomFocusBack = (undefined !== options.zoom && Number.isInteger(options.zoom)) ? options.zoom : zoom,
+		zoomFocusBack = (undefined !== options.zoom && Number.isInteger(options.zoom)) ? options.zoom : this.zoom,
 		markerOptions = {
 			icon: new icon(),
 			feature: options
 		},
-		latlng = new L.LatLng(options.coord[0], options.coord[1]);
+		latLng = new L.LatLng(options.coord[0], options.coord[1]),
+		marker = new L.marker(latLng, markerOptions);
 
-	marker = new L.marker(latlng, markerOptions).addTo(map);
+	marker.addTo(map);
 	marker.on('mouseover', function() {
-		lthis.displayTooltip(options.title, map.latLngToContainerPoint(latlng));
+		lthis.displayTooltip(options.title, map.latLngToContainerPoint(latLng));
 	});
 	marker.on('mouseout', () => $('#tooltip').css('display', 'none'));
 	if('me' === type) {
-		map.setView(latlng, zoomFocusBack);
+		map.setView(latLng, zoomFocusBack);
 		markerMe = marker;
 	} else {
+		let category = `${options.categoryId}` || options.markerType;
+
 		marker.on('click', this.displayPopup.bind(this));
-		category = `${options.categoryId}` || options.markerType;
 		if(!markers[category]) {
 			markers[category] = [];
 		}
@@ -347,7 +353,6 @@ TbMap.prototype.addMarker = function(options) {
 TbMap.prototype.markerIconOptions = function(iconInfos) {
 	let returnedOptions = {
 		options: {
-			shadowUrl: imagesPath +'marker-shadow.png',
 			iconAnchor: new L.Point(12, 40),//correctly replaces the dot of the pointer
 			iconSize: new L.Point(24,40),
 			iconUrl: iconInfos.icon
@@ -364,18 +369,6 @@ TbMap.prototype.markerIconOptions = function(iconInfos) {
 };
 
 TbMap.prototype.initSources = function() {
-	this.hidePopup();
-	this.programMapRefresh();
-};
-
-TbMap.prototype.hidePopup = function() {
-	if (!!this.popup && map.hasLayer(this.popup)) {
-		map.removeLayer(this.popup);
-	}
-	this.popup = null;
-};
-
-TbMap.prototype.programMapRefresh = function() {
 	const lthis = this;
 
 	sourcesIdentifiers.forEach(originSource => {
@@ -445,10 +438,7 @@ TbMap.prototype.runAjax = function() {
 };
 
 TbMap.prototype.isRequestStatusOK = function() {
-	return (
-		(200 === this.loadPointsRequest.status || 304 === this.loadPointsRequest.status)
-		|| 0 === this.loadPointsRequest.status
-	);
+	return [0,200,304].includes(this.loadPointsRequest.status);
 };
 
 TbMap.prototype.displayTooltip = function(responseText, point) {
@@ -456,42 +446,34 @@ TbMap.prototype.displayTooltip = function(responseText, point) {
 
 	$tooltip.html(responseText);
 	if ('none' === $tooltip.css('display')) {
-		const x = point.x - 15,
-			y = point.y + 10;
-
-		$tooltip.css('display', 'block');
-		$tooltip.css('left', x + 'px');
-		$tooltip.css('top', y + 'px');
+		$tooltip.css({
+			'display': 'block',
+			'left': `${point.x - 15}px`,
+			'top': `${point.y + 10}px`
+		});
 	}
 };
 
 TbMap.prototype.displayPopup = function(e) {
 	const lthis = this,
 		data = e.target,
-		removePopupHTML = () => {
-			if(0 < $('#marker-embedded-infos-zone #popup').length) {
-				$('#marker-embedded-infos-zone #popup').remove();
-			}
-		},
-		latlng = new L.LatLng(data.getLatLng().lat, data.getLatLng().lng);
+		$popupZone = $('#popup-zone'),
+		removePopupHTML = () => $('#popup')?.remove(),
+		latLng = new L.LatLng(data.getLatLng().lat, data.getLatLng().lng);
 
+	map.panTo(latLng);
 	removePopupHTML();
-	$('#marker-embedded-infos-zone').append(
+	$popupZone.append(
 		`<div id="popup">
 			<button class="close-popup">×</button>
 			${sourceClassInstance.popupTpl(data.options.feature)}
 		</div>`
 	);
-	$('#marker-embedded-infos-zone').addClass('visible');
-	map.panTo(latlng);
+	$popupZone.addClass('visible');
 
-	$('#marker-embedded-infos-zone .close-popup').on('click', function() {
-		$('#marker-embedded-infos-zone').removeClass('visible');
+	$('.close-popup', $popupZone).on('click', function() {
+		$popupZone.removeClass('visible');
 		removePopupHTML();
-		if(!!lthis.popup && map.hasLayer(lthis.popup)) {
-			map.removeLayer(lthis.popup);
-		}
-		lthis.popup = null;
 	});
 };
 
@@ -511,14 +493,14 @@ TbMap.prototype.processSourceData = function() {
 
 		if (jsonData) {
 			const categoriesCount = {};
+
 			jsonData.forEach(singleSourceData => {
 				const categoryId = singleSourceData.categoryId;
 
 				if (!categoriesCount[categoryId]) {
 					categoriesCount[categoryId] = 0;
 				}
-				categoriesCount[categoryId]++
-
+				categoriesCount[categoryId]++;
 				lthis.addMarker(singleSourceData);
 			});
 			this.updateFilters(categoriesCount);
@@ -527,18 +509,15 @@ TbMap.prototype.processSourceData = function() {
 };
 
 TbMap.prototype.updateFilters = function(categoriesCount) {
-	let $filter;
+	let count,
+		$filter;
 
 	$.each(configSource.categories, id => {
-		$filter = $(`#filters-zone .filters-form .category-filter .filter-${source}-${id}`);
-		if(!!categoriesCount[id]) {
-			$filter.closest('.category-filter').removeClass('disabled');
-			$filter.prop('disabled',false)
-				.next('span').append(` (${categoriesCount[id]})`);
-		} else {
-			$filter.closest('.category-filter').addClass('disabled');
-			$filter.prop('disabled',true)
-				.next('span').append(' (0)');
-		}
+		cantFilter = !categoriesCount[id];
+		$filter = $(`.filter-${source}-${id}`);
+
+		$filter.prop('disabled', cantFilter);
+		$filter.closest('.category-filter').toggleClass('disabled', cantFilter);
+		$filter.next('span').append(` (${categoriesCount[id] ?? '0'})`);
 	});
 };

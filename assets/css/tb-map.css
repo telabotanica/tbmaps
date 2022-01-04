@@ -76,9 +76,10 @@
  font-style:normal;
  font-display:swap
 }
-
+/*+--------------------------------------------------------------------------+*/
 html {
 	overflow:hidden;
+	font-size:10px;
 }
 body {
 	overflow:hidden;
@@ -87,51 +88,25 @@ body {
 	width:100%;
 	height:100%;
 	font-family: Muli,sans-serif;
-	font-size:12px;
+	font-size:1.5rem;
 	color: rgb(51, 51, 51);
-}
-h1 {
-	font-size:1.6rem;
-}
-h2 {
-	font-size:1.4rem;
 }
 a, a:active, a:visited {
 	text-decoration:none;
 	outline:none;
 	color: rgb(51, 51, 51);
 }
-/*+-----------------------------------------------------------------------------------------------------------------+*/
-/* Présentation des listes de définitions */
-dl {
-	width:100%;
-	margin:0;
-}
-dt {
-	float:left;
-	font-weight:bold;
-	text-align:top left;
-	margin-right:0.3rem;
-	line-height:0.8rem;
-}
-dd {
-	width:auto;
-	margin:0.5rem 0;
-	line-height:0.8rem;
-}
-/*+-----------------------------------------------------------------------------------------------------------------+*/
+/*+--------------------------------------------------------------------------+*/
 .hidden {
 	display: none!important;
 }
-
 .disabled {
 	color: #929297;
 }
-
 .warning {
 	color: #e6885b!important;
 }
-
+/*+--------------------------------------------------------------------------+*/
 .button.around-me {
 	position: absolute;
 	left: 50px;
@@ -151,7 +126,7 @@ dd {
 	color: #009fb8;
 	display: block;
 	font-family: Ubuntu,sans-serif;
-	font-size: 0.8rem;
+	font-size: 1.5rem;
 	letter-spacing: 1px;
 	line-height: 15px;
 	text-align: center;
@@ -160,45 +135,27 @@ dd {
 	-o-transition: background-color .2s ease;
 	transition: background-color .2s ease;
 }
-
 .button.around-me.warning {
 	background-image: url(../images/undo.svg);
 }
-
 .button:hover,
 .button:focus {
 	background-color: rgba(255, 255, 255, 0.8);
 }
-
 .button:visited.disabled {
 	background-color: #c0c0c0 ;
 }
-/*+-----------------------------------------------------------------------------------------------------------------+*/
+/*+--------------------------------------------------------------------------+*/
 /* Message de chargement */
 #loading {
 	margin:25px;
 	text-align:center;
 }
-#loading img{
+#loading img {
 	display:block;
 	margin:auto;
 }
-/*+-----------------------------------------------------------------------------------------------------------------+*/
-/* Avertissement */
-#warning-zone {
-	background-color:#4A4B4C;
-	color:#CCC;
-	padding:12px;
-	text-align:justify;
-	line-height:16px;
-}
-#warning-zone h1{
-	margin:0;
-}
-#warning-zone a {
-	border-bottom:1px dotted gainsboro;
-}
-/*+-----------------------------------------------------------------------------------------------------------------+*/
+/*+--------------------------------------------------------------------------+*/
 /* Carte title */
 #title-zone {
 	position: absolute;
@@ -209,24 +166,22 @@ dd {
 	width: 600px;
 	margin-left: -300px;
 }
-
 #map-title {
 	display:inline-block;
 	margin:0 auto;
 	padding:10px;
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgba(255, 255, 255, 0.7);
 	border-radius: 4px;
 	text-align: center;
 	font-weight: bold;
 	font-size: 2rem;
 	color:#606060;
 }
-
 #map-title {/*Hack CSS  fonctionne seulement dans ie6, 7 & 8 */
 	display:inline !hackCssIe6Et7;/*Hack CSS pour ie6 & ie7 */
 	display /*\**/:inline\9;/*Hack CSS pour ie8 */
 }
-
+/*+--------------------------------------------------------------------------+*/
 #logo {
 	position:absolute;
 	z-index:1999;
@@ -236,38 +191,23 @@ dd {
 	background-color: rgba(255, 255, 255, 0.9);
 	padding: 5px;
 }
-
 /*+-----------------------------------------------------------------------------------------------------------------+*/
 /* message de chargement de donnees */
 #loading-zone {
-	background-color: white;
-	border: 5px solid #D7DBEA;
 	display: none;
-	height: 70px;
-	left: 40%;
-	padding: 10px;
 	position: fixed;
-	text-align: center;
 	top: 40%;
-	width: 230px;
-	z-index: 3000;
+	left: 40%;
+	z-index: 2100;
+	background-color: rgba(255, 255, 255, 0.95);
+	width: 25rem;
+	padding: 2rem;
+	font-size: 1.2rem;
+	text-align: center;
+	box-shadow: 0 0 15px black;
+	border-radius: 4px;
 }
-
-/*+-------------------------------------------------------------------
-/* Ajout alex */
-
-.info {
-	padding:6px 8px;
-	font-size:1rem;
-	background:white;
-	border-radius:5px;
-	line-height:18px;
-}
-.info h4 {
-	margin: 0 0 5px;
-	color: #555;
-}
-
+/*+--------------------------------------------------------------------------+*/
 #tooltip {
 	position: absolute;
 	z-index: 3000;
@@ -275,19 +215,18 @@ dd {
 	border-radius : 5px;
 	background-color: rgba(255, 255, 255, 0.95);
 	padding: 5px;
-	font-family : sans-serif;
-	font-size:1rem;
+	font-size:1.2rem;
 	color: #555;
 }
-
-#tooltip h3, #tooltip div { margin: 0; }
-
+#tooltip h3,
+#tooltip div {
+	margin: 0;
+}
 /*+----------------------------------------------------------+*/
-
 #filters-zone {
 	display: block;
 	position: absolute;
-	font-size: 0.8rem;
+	font-size: 1.2rem;
 	bottom: 10px;
 	right: 10px;
 	min-width: 200px;
@@ -298,11 +237,9 @@ dd {
 	color: #555;
 	box-shadow:0 0 15px black;
 }
-
 #filters-zone .wrapper-filter  h4 {
 	margin: 0 0 5px;
 }
-
 #filters-zone .wrapper-filter label {
 	display: block;
 	padding-bottom: 8px;
@@ -311,18 +248,14 @@ dd {
 	background-position: 100% 50%;
 	background-size: 15px;
 }
-
 #filters-zone .wrapper-filter label:not([disabled]) {
 	cursor: pointer;
 }
-
 #filters-zone .wrapper-filter label.disabled {
 	cursor: default;
 }
-
 /*+----------------------------------------------------------+*/
-
-#marker-embedded-infos-zone.visible {
+#popup-zone.visible {
 	display: block;
 	position: fixed;
 	z-index: 2000;
@@ -332,8 +265,7 @@ dd {
 	bottom: 0;
 	background-color: rgba(0, 0, 0, 0.5);
 }
-
-#marker-embedded-infos-zone.visible #popup {
+#popup-zone.visible #popup {
 	position: absolute;
 	left:20px;
 	right: 20px;
@@ -349,17 +281,16 @@ dd {
 	max-width: 600px;
 	overflow: hidden;
 }
-
-#marker-embedded-infos-zone.visible .close-popup {
+#popup-zone.visible .close-popup {
 	position: absolute;
-	top: 0;
-	right: 7px;
+	top: -10px;
+	right: 10px;
 	display: block;
 	z-index: 2001;
 	text-align: center;
-	width: 30px;
-	height: 30px;
-	font-size: 3rem;
+	width: 20px;
+	height: 20px;
+	font-size: 4rem;
 	color: #c3c3c3;
 	text-decoration: none;
 	font-weight: bold;
@@ -368,25 +299,21 @@ dd {
 	cursor: pointer;
 	pointer-events: auto;
 }
-
 #popup #events{
 	overflow: auto;
 	height: max-content;
 	max-height: calc(80vh - 40px);
 }
-
 #popup a.events-category-label,
 #popup a.website-button {
 	display: inline-block;
-	font-size: 1rem;
 }
-
 #popup a.events-category-label {
 	background-color: hsla(48,13%,50%,0.2);
 	border-radius: 1.1rem;
 	color: #72654f;
 	fill: #918a6f;
-	font-size: 0.8rem;
+	font-size: 1.2rem;
 	font-weight: 400;
 	text-decoration: none;
 	-webkit-transition: all .2s ease;
@@ -394,17 +321,14 @@ dd {
 	transition: all .2s ease;
 	padding: 0.2rem 1rem;
 }
-
 #popup a.events-category-label:hover,
 #popup a.events-category-label:focus {
 	background-color: hsla(48,13%,50%,.4);
 	color: #333;
 }
-
 #popup #events-footer {
 	width: 100%;
 }
-
 #popup a.website-button {
 	display: block;
 	background-color: #a2b93b;
@@ -412,12 +336,12 @@ dd {
 	cursor: pointer;
 	color: #fff;
 	font-family: Ubuntu,sans-serif;
-	font-size: 1rem;
+	font-size: 1.3rem;
 	font-weight: 500;
 	letter-spacing: 0.1rem;
 	margin: 0 -20px -20px;
-	width: 640px;
-	padding: 2rem 0;
+	width: 110%;
+	padding: 1.25rem 0;
 	text-align: center;
 	text-decoration: none;
 	text-transform: uppercase;
@@ -425,48 +349,41 @@ dd {
 	-o-transition: background 0.2s ease;
 	transition: background 0.2s ease;
 }
-
 #popup a.website-button:hover,
 #popup a.website-button:focus {
 	background-color: #b3c954;
 }
-
 #popup h2#events-title {
 	clear: left;
-	font-size: 1.2rem;
+	font-size: 2.6rem;
 	font-family: Ubuntu,sans-serif;
-	font-weight: 500;
-	margin: 0 0 1rem;
+	font-weight: 700;
+	margin: 0 0 2rem;
 	padding-top: 1rem;
+	line-height: 1.4;
 }
-
 #popup h2#events-title a {
 	text-decoration: none;
 	-webkit-transition: color .2s ease;
 	-o-transition: color .2s ease;
 	transition: color .2s ease;
 }
-
 #popup h2#events-title a:hover {
 	color: #6f2f11;
 }
-
 #popup .events-dates.float-left {
 	float: left;
-	width: 4rem;
 	margin-bottom: 1rem;
 	margin-right: 2.5rem;
 }
-
 #popup .events-dates {
 	color: #e16e38;
 	font-family: Ubuntu,sans-serif;
 	font-weight: 500;
 	text-align: center;
 	text-decoration: none;
-	width: 2.5rem;
+	width: 8rem;
 }
-
 #popup .events-dates-item {
 	-webkit-box-align: center;
 	-ms-flex-align: center;
@@ -479,29 +396,26 @@ dd {
 	-webkit-box-direction: normal;
 	-ms-flex-direction: column;
 	flex-direction: column;
-	height: 3.5rem;
+	height: 7rem;
 	-webkit-box-pack: center;
 	-ms-flex-pack: center;
 	justify-content: center;
-	line-height: 1rem;
-	padding: 0.8rem 0.2rem;
+	line-height: 1.5rem;
+	padding: 1.4rem 0.5rem;
 }
-
 #popup .events-dates-day {
-	font-size: 1.5rem;
-	line-height: 1rem;
+	font-size: 2.6rem;
+	line-height: 2rem;
 	margin: 0.25rem 0 0.5rem;
 }
-
 #popup .events-dates-month {
-	font-size: 0.8rem;
+	font-size: 1rem;
 	letter-spacing: 0.1rem;
 	overflow: hidden;
 	text-transform: uppercase;
 	-o-text-overflow: ellipsis;
 	text-overflow: ellipsis;
 }
-
 #popup .events-dates-item.is-end::before {
 	border-top: 0.8rem solid #f8dfd3;
 	border-left: 0.8rem solid transparent;
@@ -517,106 +431,84 @@ dd {
 	transform: translateX(-50%);
 	width: 0;
 }
-
 #popup .events-dates-item.is-end {
 	background-color: #fdf6f2;
 	position: relative;
 }
-
 #popup h2.events-info-title::before,
 #popup dl.events-info-items,
 #popup #events-excerpt {
 	display: block;
 }
-
 #popup #events-excerpt {
 	color: #333;
-	font-size: 1rem;
+	font-size: 1.5rem;
 }
-
-
 #popup .events-info {
 	padding-top: 0.1rem;
 }
-
-
 #popup .events-info,
 #popup .events-contact {
 	margin-top: 3rem;
 	margin-bottom: 3rem;
 	clear: both;
 }
-
 #popup h2.events-info-title {
 	color: #e16e38;
 	font-family: Ubuntu,sans-serif;
-	font-size: 1.5rem;
+	font-size: 2rem;
 	font-weight: 500;
 	position: relative;
 }
-
 #popup h2.events-info-title::before {
 	background: hsla(48,13%,50%,.2);
 	content: "";
-	height: 1.5px;
+	height: 0.2rem;
 	position: absolute;
 	top: 50%;
 	width: 100%;
 }
-
 #popup h2.events-info-title span {
 	background-color: #fff;
 	padding-right: 1rem;
 	position: relative;
 }
-
 #popup dl.events-info-items {
 	line-height: 2.6rem;
-	margin-block-start: 1rem;
-	margin-block-end: 1rem;
+	margin-block-start: 1em;
+	margin-block-end: 1em;
 	width: 100%;
 }
-
 #popup dt.events-info-item-title {
 	clear: left;
 	color: #e16e38;
 	float: left;
 	font-weight: 700;
 }
-
-
 #popup dt.events-info-item-title::after {
-
 	content: ":";
 	margin: 0 0.5rem;
 
 }
-
 #popup dd.events-info-item-text {
 	display: block;
 	margin-left: 0;
 }
-
-
 #popup .events-contact {
 	-webkit-box-align: start;
 	-ms-flex-align: start;
 	align-items: flex-start;
-	border-top: 1px solid hsla(48,13%,50%,.2);
+	border-top: 0.1rem solid hsla(48,13%,50%,.2);
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
-	font-size: 1rem;
+	font-size: 1.6rem;
 	font-weight: 400;
-	line-height: 18px;
+	line-height: 2.4rem;
 	overflow: hidden;
-	padding: 15px 0;
+	padding: 2rem 0;
 	position: relative;
-	clear: both;
-	width: 100%;
-	flex-direction: column;
 }
-
 #popup .events-contact-image {
 	-webkit-box-align: center;
 	-ms-flex-align: center;
@@ -630,39 +522,28 @@ dd {
 	-webkit-box-pack: center;
 	-ms-flex-pack: center;
 	justify-content: center;
-	height: 75px;
-	margin-right: 20px;
-	margin-bottom: 20px;
-	min-width: 75px;
+	height: 10rem;
+	margin-right: 2.5rem;
+	min-width: 10rem;
 	overflow: hidden;
 }
-
 #popup .events-contact-text {
 	max-width: 100%;
 }
-
 #popup .events-contact-name {
 	font-weight: 700;
-	margin-bottom: 10px;
 }
-
 #popup .events-contact-description {
 	display: block;
 }
-
 #popup .events-contact-details {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	margin-top: 5px;
+	margin-top:0.5rem;
 }
-
-#popup .events-contact-details li {
-	margin-bottom: 10px;
-}
-
 #popup .events-contact a {
-	border-bottom: 1px solid;
+	border-bottom: 0.1rem solid;
 	color: #006979;
 	font-weight: 400;
 	text-decoration: none;
@@ -671,25 +552,19 @@ dd {
 	transition: background .2s ease;
 	word-break: break-all;
 }
-
 #popup .events-contact a:hover {
 	background-color: rgba(0,105,121,.1);
 }
-
-
-/*********************************/
-
+/*+----------------------------------------------------------+*/
 @media (max-width: 768px) {
 	.button.around-me {
 		padding: 15px;
 		left: 40px;
 		background-position: 50%;
 	}
-
 	.button.around-me span{
 		display: none;
 	}
-
 	#map-title {
 		padding:5px;
 		font-size: 1rem;

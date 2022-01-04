@@ -2,7 +2,9 @@
 /* Post Events (evenements) source handler class */
 /*                                               */
 
-/***** required implementation ******/
+
+
+/******* required implementation ********/
 
 /* Source */
 
@@ -12,7 +14,7 @@ sources.evenements = {// sources.['source name']
 	// required :
 	selector: 'events',
 	sourceInfosURL: `${baseUrlSite}evenements/`,
-	sourceName: 'évènements',
+	sourceName: 'évènements',// plural
 	serviceURL: `${baseUrlSite}wp-json/wp/v2/posts?status=publish&categories=26,27,28,29&per_page=1000&order_by=modified&order=desc`,
 	// optionnal :
 	categories: {
@@ -137,7 +139,9 @@ Evenements.prototype.popupTpl = function(data) {
 	);
 };
 
-/***** optionnal implementation ******/
+
+
+/******* optionnal implementation ********/
 
 Evenements.prototype.filterData = function(eventPostData) {
 	if(
