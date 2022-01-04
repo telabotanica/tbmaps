@@ -95,7 +95,7 @@ TbMap.prototype.initMap = function() {
 		lthis.resizeMap();
 	});
 
-	this.zoom = undefined !== urlParams && Number.isInteger(urlParams.zoom) ? urlParams.zoom : defaultZoom;
+	this.zoom = undefined !== urlParams.zoom && Number.isInteger(urlParams.zoom) ? urlParams.zoom : defaultZoom;
 
 	map = L.map('map', {
 		center : new L.LatLng(...defaultCoord),
@@ -120,6 +120,7 @@ TbMap.prototype.initMap = function() {
 
 TbMap.prototype.resizeMap = function() {
 	const $map = $('#map');
+
 	$map.height($(window).height());
 	$map.width($(window).width());
 };
@@ -155,10 +156,10 @@ TbMap.prototype.addSourceFilters = function() {
 	$filters.append(filterHtml);
 	$('.category-filter', $filters).each((i, filter) => {
 		const span = $(filter).find('span'),
-			SourceFilter = span.data('source'),
+			sourceFilter = span.data('source'),
 			categoryFilter = span.data('category');
 
-		filter.style.backgroundImage =`url("${sources[SourceFilter].categories[categoryFilter].icon}")`;
+		filter.style.backgroundImage =`url("${sources[sourceFilter].categories[categoryFilter].icon}")`;
 	});
 };
 
@@ -509,7 +510,7 @@ TbMap.prototype.processSourceData = function() {
 };
 
 TbMap.prototype.updateFilters = function(categoriesCount) {
-	let count,
+	let cantFilter,
 		$filter;
 
 	$.each(configSource.categories, id => {
