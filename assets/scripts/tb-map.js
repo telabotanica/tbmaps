@@ -457,8 +457,7 @@ TbMap.prototype.displayTooltip = function(responseText, point) {
 };
 
 TbMap.prototype.displayPopup = function(e) {
-	const lthis = this,
-		data = e.target,
+	const data = e.target,
 		latLng = new L.LatLng(data.getLatLng().lat, data.getLatLng().lng);
 
 	map.panTo(latLng);
@@ -470,25 +469,26 @@ TbMap.prototype.displayPopup = function(e) {
 		</div>`
 	);
 	this.$popupZone.addClass('visible');
-    this.closePopup();
+	this.closePopup();
 };
 
 TbMap.prototype.closePopup = function() {
-	const removePopup = () => {
+	const lthis = this,
+		removePopup = () => {
 		lthis.$popupZone.removeClass('visible');
 		$('#popup').remove();
 	};
 
 	this.$popupZone.on('click', function(evt) {
-        if(evt.target.id === 'close-popup' || !evt.target.closest('#popup')) {
-            removePopup();
-        }
-    });
-    document.body.addEventListener('keydown', function(evt) {
-        if(lthis.$popupZone.hasClass('visible') && (27 === evt.keyCode || /^Esc(ape)?/.test(evt.key))) {
-            removePopup();
-        }
-    });
+		if(evt.target.id === 'close-popup' || !evt.target.closest('#popup')) {
+			removePopup();
+		}
+	});
+	document.body.addEventListener('keydown', function(evt) {
+		if(lthis.$popupZone.hasClass('visible') && (27 === evt.keyCode || /^Esc(ape)?/.test(evt.key))) {
+			removePopup();
+		}
+	});
 };
 
 TbMap.prototype.processSourceData = function() {
