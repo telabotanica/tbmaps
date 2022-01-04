@@ -47,6 +47,7 @@ let map = null,
 function TbMap() {
 	this.url = '';
 	this.$loadZone = $('#loading-zone');
+	this.$popupZone = $('#popup-zone');
 	this.loadPointsRequest = null;
 	this.timer = null;
 	this.zoom = defaultZoom;
@@ -458,24 +459,36 @@ TbMap.prototype.displayTooltip = function(responseText, point) {
 TbMap.prototype.displayPopup = function(e) {
 	const lthis = this,
 		data = e.target,
-		$popupZone = $('#popup-zone'),
-		removePopupHTML = () => $('#popup')?.remove(),
 		latLng = new L.LatLng(data.getLatLng().lat, data.getLatLng().lng);
 
 	map.panTo(latLng);
-	removePopupHTML();
-	$popupZone.append(
+	$('#popup')?.remove();
+	this.$popupZone.append(
 		`<div id="popup">
-			<button class="close-popup">×</button>
+			<button id="close-popup">×</button>
 			${sourceClassInstance.popupTpl(data.options.feature)}
 		</div>`
 	);
-	$popupZone.addClass('visible');
+	this.$popupZone.addClass('visible');
+    this.closePopup();
+};
 
-	$('.close-popup', $popupZone).on('click', function() {
-		$popupZone.removeClass('visible');
-		removePopupHTML();
-	});
+TbMap.prototype.closePopup = function() {
+	const removePopup = () => {
+		lthis.$popupZone.removeClass('visible');
+		$('#popup').remove();
+	};
+
+	this.$popupZone.on('click', function(evt) {
+        if(evt.target.id === 'close-popup' || !evt.target.closest('#popup')) {
+            removePopup();
+        }
+    });
+    document.body.addEventListener('keydown', function(evt) {
+        if(lthis.$popupZone.hasClass('visible') && (27 === evt.keyCode || /^Esc(ape)?/.test(evt.key))) {
+            removePopup();
+        }
+    });
 };
 
 TbMap.prototype.processSourceData = function() {
