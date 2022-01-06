@@ -4,49 +4,53 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>Carte Multicouches</title>
+		<title>Tela Botanica | Carte Multicouches</title>
 
+		<!-- Tela Botanica ressources -->
 		<link rel="icon" type="image/png" href="https://resources.tela-botanica.org/tb/img/16x16/favicon.png">
 		<link rel="shortcut icon" type="image/x-icon" href="https://resources.tela-botanica.org/tb/img/16x16/favicon.ico">
 
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="">
-		<link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" type="text/css">
+		<!-- CSS -->
+		<!-- Leaflet lib css -->
+		<link rel="stylesheet" href="lib/leaflet/leaflet.css" type="text/css">
+		<link rel="stylesheet" href="lib/leaflet-fullscreen/leaflet.fullscreen.css" type="text/css">
+		<link rel="stylesheet" href="lib/leaflet-gesture-handling/leaflet-gesture-handling.min.css" type="text/css">
+		<!-- Custom css -->
+		<link rel="stylesheet" href="assets/css/tb-map.css" media="screen">
 
-		<link href="assets/css/tb-map.css" rel="stylesheet" type="text/css" media="screen">
-
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-		<script src="https://unpkg.com/leaflet-gesture-handling"></script>
-
-		<script type="text/javascript" src="assets/scripts/config.js"></script>
-		<script type="text/javascript" src="assets/scripts/common.js"></script>
-		<script type="text/javascript" src="assets/scripts/evenements.js"></script>
-		<script type="text/javascript" src="assets/scripts/tb-map.js"></script>
+		<!-- JS scripts -->
+		<!-- JQuery -->
+		<script src="lib/jquery/jquery-3.6.0.min.js"></script>
+		<!-- Leaflet JS scripts & lib -->
+		<script src="lib/leaflet/leaflet.js"></script>
+		<script src="lib/leaflet-fullscreen/Leaflet.fullscreen.min.js"></script>
+		<script src="lib/leaflet-gesture-handling/leaflet-gesture-handling.min.js"></script>
+		<!-- Config -->
+		<script src="assets/scripts/config.js"></script>
+		<!-- Helper functions & app init -->
+		<script src="assets/scripts/common.js"></script>
+		<!-- Sources JS scripts -->
+		<script src="assets/scripts/evenements.js"></script>
+		<!-- Map global JS script -->
+		<script src="assets/scripts/tb-map.js"></script>
 	</head>
 
 	<body>
-		<div id="loading-zone"></div>
-
-		<div id="map"></div>
-
-		<div id="logo">
-			<a href="https://www.tela-botanica.org" title="https://www.tela-botanica.org" target="_blank">
-				<img height="60px" id="image-logo" src="https://resources.tela-botanica.org/tb/img/128x128/logo_carre_officiel.png" alt="logo">
-			</a>
+		<div id="map">
+			<div id="loading-zone"></div>
+			<div id="logo">
+				<a href="https://www.tela-botanica.org" title="https://www.tela-botanica.org" target="_blank">
+					<img height="60px" id="image-logo" src="https://resources.tela-botanica.org/tb/img/128x128/logo_carre_officiel.png" alt="logo">
+				</a>
+			</div>
+			<div id="title-zone" class="element-overlay hidden">
+				<h1 id="map-title"><span id="map-title-infos"></span></h1>
+			</div>
+			<div id="filters-zone" >
+				<form class="filters-form"></form>
+			</div>
+			<div id="popup-zone"></div>
+			<div id="tooltip" style="display:none;"></div>
 		</div>
-
-		<div id="title-zone" class="element-overlay hidden">
-			<h1 id="map-title">
-				<span id="map-title-infos"></span>
-			</h1>
-		</div>
-
-		<div id="filters-zone" >
-			<form class="filters-form"></form>
-		</div>
-
-		<div id="marker-embedded-infos-zone"></div>
-
-		<div id="tooltip" style="display:none;"></div>
 	</body>
 </html>
