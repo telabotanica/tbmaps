@@ -581,15 +581,12 @@ a, a:active, a:visited {
 	}
 }
 
-@media only screen and (hover: none) {
-	#tooltip {
-		display: none!important;
-	}
-}
-
 @media screen and (max-device-width: 480px) {
 	html {
 		font-size:8px;
+	}
+	#tooltip {
+		display: none!important;
 	}
 	#map-title {
 		font-size: 2.2rem;
