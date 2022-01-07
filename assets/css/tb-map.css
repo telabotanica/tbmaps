@@ -363,12 +363,16 @@ a, a:active, a:visited {
 	line-height: 1.4;
 }
 #popup h2#events-title a {
+	color: #232323;
 	text-decoration: none;
 	-webkit-transition: color .2s ease;
 	-o-transition: color .2s ease;
 	transition: color .2s ease;
 }
-#popup h2#events-title a:hover {
+#popup h2#events-title a:hover,
+#popup h2#events-title a:active,
+#popup h2#events-title a:focus,
+#popup h2#events-title a:visited {
 	color: #6f2f11;
 }
 #popup .events-dates.float-left {
@@ -484,6 +488,7 @@ a, a:active, a:visited {
 	color: #e16e38;
 	float: left;
 	font-weight: 700;
+	font-size: 1.5rem;
 }
 #popup dt.events-info-item-title::after {
 	content: ":";
@@ -493,6 +498,7 @@ a, a:active, a:visited {
 #popup dd.events-info-item-text {
 	display: block;
 	margin-left: 0;
+	font-size: 1.5rem;
 }
 #popup .events-contact {
 	-webkit-box-align: start;
