@@ -96,6 +96,11 @@ a, a:active, a:visited {
 	outline:none;
 	color: rgb(51, 51, 51);
 }
+.leaflet-container {
+	font-size: 1.5rem;
+	line-height: inherit;
+	font-family: Muli,sans-serif;
+}
 /*+--------------------------------------------------------------------------+*/
 .hidden {
 	display: none!important;
