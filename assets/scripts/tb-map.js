@@ -523,20 +523,23 @@ TbMap.prototype.processSourceData = function() {
 };
 
 TbMap.prototype.updateFilters = function(categoriesCount) {
+	const $globalSourceFilter = $(`.filter-${source}-all`);
 	let cantFilter,
 		$filter,
 		sourceGlobalCount = 0;
 
 	$.each(configSource.categories, id => {
-		cantFilter = !!categoriesCount[id];
+		cantFilter = !categoriesCount[id];
 		$filter = $(`.filter-${source}-${id}`);
 
 		$filter.prop('disabled', cantFilter);
 		$filter.closest('.category-filter').toggleClass('disabled', cantFilter);
 		$filter.next('span').append(` (${categoriesCount[id] ?? '0'})`);
-		if(cantFilter) {
+		if(!cantFilter) {
 			sourceGlobalCount += categoriesCount[id];
 		}
 	});
-	$(`.filter-${source}-all`).next('span').append(` (${sourceGlobalCount})`);
+	$globalSourceFilter.prop('disabled', 0 >= sourceGlobalCount);
+	$globalSourceFilter.closest('.source-filter').toggleClass('disabled', 0 >= sourceGlobalCount);
+	$globalSourceFilter.next('span').append(` (${sourceGlobalCount})`);
 };
