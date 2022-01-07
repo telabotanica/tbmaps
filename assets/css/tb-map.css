@@ -161,7 +161,7 @@ a, a:active, a:visited {
 	position: absolute;
 	left: 50%;
 	top: 11px;
-	z-index: 400;
+	z-index: 2000;
 	display: flex;
 	width: 600px;
 	margin-left: -300px;
@@ -273,7 +273,7 @@ a, a:active, a:visited {
 	bottom: 20px;
 	margin: auto;
 	background-color: #fff;
-	padding: 20px;
+	padding: 0 20px;
 	border-radius: 2px;
 	box-shadow: -2px 2px 6px rgba(0,0,0,0.1);
 	height: max-content;
@@ -320,6 +320,7 @@ a, a:active, a:visited {
 	-o-transition: all .2s ease;
 	transition: all .2s ease;
 	padding: 0.2rem 1rem;
+	margin-top: 20px;
 }
 #popup a.events-category-label:hover,
 #popup a.events-category-label:focus {
@@ -339,7 +340,7 @@ a, a:active, a:visited {
 	font-size: 1.3rem;
 	font-weight: 500;
 	letter-spacing: 0.1rem;
-	margin: 0 -20px -20px;
+	margin: 0 -20px;
 	width: 110%;
 	padding: 1.25rem 0;
 	text-align: center;
@@ -575,7 +576,41 @@ a, a:active, a:visited {
 	}
 	#map-title {
 		padding:5px;
-		font-size: 1rem;
+		font-size: 1.8rem;
 		background-color: rgba(255, 255, 255, 0.8);
+	}
+}
+
+@media only screen and (hover: none) {
+	#tooltip {
+		display: none!important;
+	}
+}
+
+@media screen and (max-device-width: 480px) {
+	html {
+		font-size:8px;
+	}
+	#map-title {
+		font-size: 2.2rem;
+	}
+	#popup a.website-button {
+		position: fixed;
+		bottom: 0;
+		right: 0;
+	}
+	#popup-zone.visible #popup {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		margin: 0;
+		height: 100vh;
+		max-height: 100vh;
+	}
+	#popup #events {
+		height: auto;
+		max-height: 90vh;
 	}
 }
