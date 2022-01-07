@@ -89,3 +89,13 @@ const validSource = sourceIdentifier => (
 	'string' === typeof(sources[sourceIdentifier].sourceName) &&
 	'string' === typeof(sources[sourceIdentifier].serviceURL)
 );
+
+const isTouchScreen = () => {
+  try{
+  	document.createEvent("TouchEvent");
+  	return true;
+  }
+  catch(e){
+  	return false;
+  }
+};

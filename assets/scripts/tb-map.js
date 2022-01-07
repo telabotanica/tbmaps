@@ -329,7 +329,9 @@ TbMap.prototype.addMarker = function(options) {
 
 	marker.addTo(map);
 	marker.on('mouseover', function() {
-		lthis.displayTooltip(options.title, map.latLngToContainerPoint(latLng));
+		if (!isTouchScreen()) {
+			lthis.displayTooltip(options.title, map.latLngToContainerPoint(latLng));
+		}
 	});
 	marker.on('mouseout', () => $('#tooltip').css('display', 'none'));
 	if('me' === type) {
