@@ -362,17 +362,19 @@ a, a:active, a:visited {
 	padding-top: 1rem;
 	line-height: 1.4;
 }
-#popup h2#events-title a {
+#popup h2#events-title a,
+#popup h2#events-title a:active,
+#popup h2#events-title a:focus,
+#popup h2#events-title a:visited {
 	color: #232323;
+}
+#popup h2#events-title a {
 	text-decoration: none;
 	-webkit-transition: color .2s ease;
 	-o-transition: color .2s ease;
 	transition: color .2s ease;
 }
-#popup h2#events-title a:hover,
-#popup h2#events-title a:active,
-#popup h2#events-title a:focus,
-#popup h2#events-title a:visited {
+#popup h2#events-title a:hover {
 	color: #6f2f11;
 }
 #popup .events-dates.float-left {
