@@ -35,6 +35,7 @@ const osmFrTilesURL = 'https://osm.tela-botanica.org/tuiles/osmfr/{z}/{x}/{y}.pn
 	];
 
 let map = null,
+	spiderfier,
 	source,
 	sourcesIdentifiers = [] ,
 	configSource,
@@ -98,7 +99,7 @@ TbMap.prototype.initMap = function() {
 
 	this.zoom = undefined !== urlParams.zoom && Number.isInteger(urlParams.zoom) ? urlParams.zoom : defaultZoom;
 
-	map = L.map('map', {
+	map = new L.map('map', {
 		center : new L.LatLng(...defaultCoord),
 		zoom : this.zoom,
 		minZoom : 4,
@@ -117,6 +118,13 @@ TbMap.prototype.initMap = function() {
 	});
 	satelliteLayer.addTo(map);
 	osmLayer.addTo(map);
+
+	// try spiderfier
+	try {
+		spiderfier = new OverlappingMarkerSpiderfier(map, {nearbyDistance:2});
+	} catch (e) {
+		console.warn('Error setting spiderifier :', e);
+	}
 };
 
 TbMap.prototype.resizeMap = function() {
@@ -328,6 +336,9 @@ TbMap.prototype.addMarker = function(options) {
 		marker = new L.marker(latLng, markerOptions);
 
 	marker.addTo(map);
+	if(spiderfier) {
+		spiderfier.addMarker(marker);
+	}
 	marker.on('mouseover', function() {
 		if (!isTouchScreen()) {
 			lthis.displayTooltip(options.title, map.latLngToContainerPoint(latLng));
@@ -340,7 +351,11 @@ TbMap.prototype.addMarker = function(options) {
 	} else {
 		let category = `${options.categoryId}` || options.markerType;
 
-		marker.on('click', this.displayPopup.bind(this));
+		if(spiderfier) {
+			spiderfier.addListener('click', this.displayPopup.bind(this));
+		} else {
+			marker.on('click', this.displayPopup.bind(this));
+		}
 		if(!markers[category]) {
 			markers[category] = [];
 		}
@@ -458,8 +473,10 @@ TbMap.prototype.displayTooltip = function(responseText, point) {
 	}
 };
 
-TbMap.prototype.displayPopup = function(e) {
-	const data = e.target,
+// arg could be marker or click event object on marker
+// depending on spiderfier may have been loaded or not
+TbMap.prototype.displayPopup = function(arg) {
+	const data = spiderfier ? arg : arg.target,
 		latLng = new L.LatLng(data.getLatLng().lat, data.getLatLng().lng);
 
 	map.panTo(latLng);
