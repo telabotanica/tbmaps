@@ -474,7 +474,7 @@ TbMap.prototype.displayTooltip = function(responseText, point) {
 };
 
 // arg could be marker or click event object on marker
-// depending on spiderfier may have been loaded or not
+// depending on spiderfier could have been instantiated or not
 TbMap.prototype.displayPopup = function(arg) {
 	const data = spiderfier ? arg : arg.target,
 		latLng = new L.LatLng(data.getLatLng().lat, data.getLatLng().lng);
