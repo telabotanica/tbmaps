@@ -86,6 +86,7 @@ Evenements.prototype.formatData = function(data) {
 			category: e.category.name,
 			price: e.acf.prices,
 			markerType: 'events',
+			source: 'evenements',
 			contact: contact,
 			contactImage: contact?.image?.url ?? contact?.image?.sizes?.thumbnail ?? null,
 			excerpt: excerpt

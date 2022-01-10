@@ -25,19 +25,19 @@ const osmFrTilesURL = 'https://osm.tela-botanica.org/tuiles/osmfr/{z}/{x}/{y}.pn
 	},
 	osmLayer = new L.TileLayer(osmFrTilesURL, generateLayerOptions('osm')),
 	satelliteLayer = new L.TileLayer(googleTilesURL, generateLayerOptions('google')),
-	markers = {},
 	expectedParams = [
 		'titre',
 		'logo',
 		'sources',
 		'zoom',
 		'url_site'
-	];
+	],
+	markers = [];
 
 let map = null,
 	spiderfier,
 	source,
-	sourcesIdentifiers = [] ,
+	sourcesIdentifiers = [],
 	configSource,
 	sourceClassInstance,
 	markerMe = null,
@@ -97,7 +97,7 @@ TbMap.prototype.initMap = function() {
 		lthis.resizeMap();
 	});
 
-	this.zoom = undefined !== urlParams.zoom && Number.isInteger(urlParams.zoom) ? urlParams.zoom : defaultZoom;
+	this.zoom = parseInt(urlParams.zoom, 10) || defaultZoom;
 
 	map = new L.map('map', {
 		center : new L.LatLng(...defaultCoord),
@@ -119,12 +119,7 @@ TbMap.prototype.initMap = function() {
 	satelliteLayer.addTo(map);
 	osmLayer.addTo(map);
 
-	// try spiderfier
-	try {
-		spiderfier = new OverlappingMarkerSpiderfier(map, {nearbyDistance:2});
-	} catch (e) {
-		console.warn('Error setting spiderifier :', e);
-	}
+	spiderfier = new OverlappingMarkerSpiderfier(map, {nearbyDistance:10});
 };
 
 TbMap.prototype.resizeMap = function() {
@@ -290,23 +285,27 @@ TbMap.prototype.initSourcesFilters = function() {
 
 TbMap.prototype.filterSource = function(evt) {
 	const lthis = this,
-		input = evt.target,
-		sourceFilter = input.dataset.source,
-		dataFilter = input.dataset.category;
+		sourceFilter = evt.target.dataset.source,
+		categoryFilter = evt.target.dataset.category,
+		spiderfieredMarkers = spiderfier.getMarkers();
+	let options,
+		matchesFilter;
 
-	$.each(markers, (index,v) => {
-		v.forEach(markersInfos => {
-			if('all' !== dataFilter) {
-				if(index !== dataFilter) {
-					map.removeLayer(markersInfos.marker);
-				} else if(!map.hasLayer(markersInfos.marker)){
-					lthis.addMarker(markersInfos.options);
-				}
-			} else if(markersInfos.source === sourceFilter && !map.hasLayer(markersInfos.marker)){
-				lthis.addMarker(markersInfos.options);
+	markers.forEach(marker => {
+		options = marker.options.feature;
+		matchesFilter = 'all' ===  categoryFilter || options.categoryId.toString() === categoryFilter;
+
+		if (options.source === sourceFilter && matchesFilter) {
+			if(!marker._map) {
+				marker.addTo(map);
 			}
-		});
-
+			if(!spiderfieredMarkers.includes(marker)) {
+				spiderfier.addMarker(marker);
+			}
+		} else {
+			marker.remove();
+			spiderfier.removeMarker(marker);
+		}
 	});
 };
 
@@ -336,8 +335,14 @@ TbMap.prototype.addMarker = function(options) {
 		marker = new L.marker(latLng, markerOptions);
 
 	marker.addTo(map);
-	if(spiderfier) {
+
+	if('me' !== type) {
+		markers.push(marker);
 		spiderfier.addMarker(marker);
+		spiderfier.addListener('click', this.displayPopup.bind(this));
+	} else {
+		map.setView(latLng, zoomFocusBack);
+		markerMe = marker;
 	}
 	marker.on('mouseover', function() {
 		if (!isTouchScreen()) {
@@ -345,28 +350,6 @@ TbMap.prototype.addMarker = function(options) {
 		}
 	});
 	marker.on('mouseout', () => $('#tooltip').css('display', 'none'));
-	if('me' === type) {
-		map.setView(latLng, zoomFocusBack);
-		markerMe = marker;
-	} else {
-		let category = `${options.categoryId}` || options.markerType;
-
-		if(spiderfier) {
-			spiderfier.addListener('click', this.displayPopup.bind(this));
-		} else {
-			marker.on('click', this.displayPopup.bind(this));
-		}
-		if(!markers[category]) {
-			markers[category] = [];
-		}
-		options.source = source ?? options.markerType;
-		markers[category].push({
-			id: marker._leaflet_id,
-			source: options.source,
-			options: options,
-			marker: marker
-		});
-	}
 };
 
 TbMap.prototype.markerIconOptions = function(iconInfos) {
