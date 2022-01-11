@@ -232,7 +232,7 @@ a, a:active, a:visited {
 	display: block;
 	position: absolute;
 	font-size: 1.2rem;
-	bottom: 10px;
+	bottom: 30px;
 	right: 10px;
 	min-width: 200px;
 	z-index: 1000;
