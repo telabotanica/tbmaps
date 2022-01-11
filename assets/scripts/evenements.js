@@ -53,7 +53,7 @@ Evenements.prototype.formatData = function(data) {
 	let eventPostData = {},
 		place = {},
 		categoryId,
-		excerpt,
+		htmlStringContent,
 		endDate,
 		formatedEndDate,
 		contact;
@@ -67,8 +67,8 @@ Evenements.prototype.formatData = function(data) {
 		categoryId = e.categories[0];
 		formatedEndDate = formatDates(e.acf['date_end']);
 		endDate = formatedEndDate ? e.acf['date_end'] : null;
-		excerpt = !!e?.excerpt?.rendered ? new DOMParser().parseFromString(e.excerpt.rendered,"text/html").documentElement.textContent : null;
 		contact = e.acf.contact[0] ?? null;
+		htmlStringContent = !!e.content?.rendered ? e.content.rendered : !!e.acf?.description ? e.acf.description : !!e.excerpt?.rendered ? e.excerpt.rendered : '';
 
 		eventPostData = {
 			id: e.id,
@@ -89,7 +89,7 @@ Evenements.prototype.formatData = function(data) {
 			source: 'evenements',
 			contact: contact,
 			contactImage: contact?.image?.url ?? contact?.image?.sizes?.thumbnail ?? null,
-			excerpt: excerpt
+			excerpt: generateExcerpt( parseHtmlStringContent(htmlStringContent) )
 		};
 		returnData.push(eventPostData);
 	});
@@ -120,7 +120,7 @@ Evenements.prototype.popupTpl = function(data) {
 					<dt class="events-info-item-title">Adresse</dt>
 					<dd class="events-info-item-text">${data.place.value}</dd>
 					<dt class="events-info-item-title">Tarif</dt>
-					<dd class="events-info-item-text">${!!data.price ? new DOMParser().parseFromString(data.price,"text/html").documentElement.textContent: 'Gratuit'}</dd>
+					<dd class="events-info-item-text">${!!data.price ? parseHtmlStringContent(data.price) : 'Gratuit'}</dd>
 				</dl>
 			</div>
 			<div class="events-contact">
@@ -171,7 +171,7 @@ Evenements.prototype.validatePostsEventsDates = function(acf) {
 		return false;
 	}
 
-	const hasEndDateValue = !!acf['date_end'] && 'string' === typeof(acf['date_end']);
+	const hasEndDateValue = isString(acf['date_end'], true);
 
 	if(hasEndDateValue && !regexpDate.test(acf['date_end'])) {
 		return false

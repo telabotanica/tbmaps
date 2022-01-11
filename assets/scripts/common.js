@@ -19,20 +19,29 @@ const regexpDate = /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\
 
 /***** utils *****/
 
+const isString = (string, checkEmpty = false) => {
+	let isString = 'string' === typeof string || string instanceof String;
+
+	if(checkEmpty) {
+		isString &= '' != string;
+	}
+	return isString;
+}
+
 const tryParseJson = str => {
-	if ( 'string' !== typeof str ){
+	if (!isString(str)) {
 		return false;
 	}
 	try{
-		const json = JSON.parse( str );
+		const json = JSON.parse(str);
 
-		if ( !!json && 'object' === typeof json ) {
+		if (!!json && 'object' === typeof json) {
 			return json;
 		} else {
 			return false;
 		}
 	}
-	catch ( e ){
+	catch (e){
 		return false;
 	}
 };
@@ -41,7 +50,7 @@ const formatDates = shortFrDate => {
 	const options = {day: 'numeric', month: 'short', year: 'numeric'};
 	let formatedDateData = null;
 
-	if (undefined !== shortFrDate && 'string' === typeof(shortFrDate) && '' !== shortFrDate) {
+	if (isString(shortFrDate, true)) {
 		const dateParts = shortFrDate.split('/'),
 			dateString = dateParts.reverse().join('-'),
 			date = new Date(dateString),
@@ -55,7 +64,7 @@ const formatDates = shortFrDate => {
 	return formatedDateData;
 };
 
-const capitalizeFirstLetter = string => ('string' === typeof(string) && '' !== string) ? string[0].toUpperCase()+string.slice(1) : string;
+const capitalizeFirstLetter = string => (isString(string, true)) ? string[0].toUpperCase()+string.slice(1) : string;
 
 const dynamicCallClass = dataAttrClassName => {
 	let nameParts = dataAttrClassName.split('-');
@@ -84,10 +93,10 @@ const readUrlParams = () => {
 
 const validSource = sourceIdentifier => (
 	!!sources[sourceIdentifier] &&
-	'string' === typeof(sources[sourceIdentifier].selector) &&
-	'string' === typeof(sources[sourceIdentifier].sourceInfosURL) &&
-	'string' === typeof(sources[sourceIdentifier].sourceName) &&
-	'string' === typeof(sources[sourceIdentifier].serviceURL)
+	isString(sources[sourceIdentifier].selector) &&
+	isString(sources[sourceIdentifier].sourceInfosURL) &&
+	isString(sources[sourceIdentifier].sourceName) &&
+	isString(sources[sourceIdentifier].serviceURL)
 );
 
 const isTouchScreen = () => {
@@ -98,4 +107,24 @@ const isTouchScreen = () => {
   catch(e){
   	return false;
   }
+};
+
+const parseHtmlStringContent = content => {
+	if(!isString(content)) {
+		return null;
+	}
+	return new DOMParser().parseFromString(content,"text/html").documentElement.textContent;
+};
+
+const generateExcerpt = (string, length = 500, isLengthIncludingEllipsis = false) => {
+	if (!isString(string)) {
+		return null;
+	}
+	if (!parseInt(length) || 1 > length) {
+		return '';
+	}
+	if (isLengthIncludingEllipsis && 0 < length - 3) {
+		length -= 3;
+	}
+	return string.length > length ? string.substring(0, length) + '...' : string;
 };

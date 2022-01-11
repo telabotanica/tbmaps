@@ -449,10 +449,10 @@ a, a:active, a:visited {
 }
 #popup h2.events-info-title::before,
 #popup dl.events-info-items,
-#popup #events-excerpt {
+#popup #events-content {
 	display: block;
 }
-#popup #events-excerpt {
+#popup #events-content {
 	color: #333;
 	font-size: 1.5rem;
 }
