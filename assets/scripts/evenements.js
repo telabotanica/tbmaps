@@ -15,7 +15,7 @@ sources.evenements = {// sources.['source name']
 	selector: 'events',
 	sourceInfosURL: `${baseUrlSite}evenements/`,
 	sourceName: 'évènements',// plural
-	serviceURL: `${baseUrlSite}wp-json/wp/v2/posts?status=publish&categories=26,27,28,29&per_page=1000&order_by=modified&order=desc`,
+	serviceURL: `${baseUrlSite}wp-json/wp/v2/posts?status=publish&categories=26,27,28,29&per_page=800&order_by=modified&order=desc`,
 	// optionnal :
 	categories: {
 		'26': {
