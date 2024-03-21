@@ -1,0 +1,22 @@
+<form class="filters-form">
+  <div class="wrapper-filter">
+    <h4>Filtrer les données</h4>
+
+    @for (source of sources; track source.name) {
+      <label class="source-filter" for="filter-{{source.name}}">
+      <input type="radio" id="filter-{{source.name}}" class="input-filters filter-{{source.name}}-all" name="{{source.name}}"
+                   data-category="all" value="{{source.name}}" checked (change)="handleChange($event)">
+            <span class="source-filter-label" data-category="all">Tous les {{source.displayName}} ({{source.entries}})</span>
+      </label>
+
+      @if(source.name == 'evenements'){
+        @for (category of categories; track category.id){
+        <label for="category-{{category.id}}" class="category-filter" style="background-image: url('{{category.icon}}')">
+             <input type="radio" id="category-{{category.id}}" class="input-filters" name="{{source.name}}" value="{{category.id}}" (change)="handleChange($event)">
+             <span class="source-filter-label">{{category.title}} ({{category.dataLength}})</span>
+            </label>
+        }
+      }
+    }
+  </div>
+</form>

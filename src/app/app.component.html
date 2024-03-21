@@ -1,0 +1,61 @@
+<div id="map" leaflet
+     [leafletOptions]="options"
+     (leafletMapReady)="mapReady($event)"
+(leafletClick)="mapClicked($event)">
+
+    @if(isLoading){
+  <div id="loading-zone">
+    <div id="loading-{{sourceDisplay}}">
+      <img src="../assets/images/loading.gif" alt="Chargement en cours..." style="width:10%;">
+			<p>Chargement des {{sourceDisplay}} en cours...</p>
+    </div>
+  </div>
+    }
+
+  <div id="logo">
+    <a href="https://www.tela-botanica.org" title="https://www.tela-botanica.org" target="_blank">
+      <img height="60px" id="image-logo" src="https://resources.tela-botanica.org/tb/img/128x128/logo_carre_officiel.png" alt="logo">
+    </a>
+  </div>
+  <div id="title-zone" class="element-overlay hidden">
+    <h1 id="map-title"><span id="map-title-infos"></span></h1>
+  </div>
+  <div id="filters-zone">
+    @if(sources && dataToDisplay){
+      <app-filter [sources]="sources" [categories]="eventsCategories" [dataToDisplay]="dataToDisplay" (dataToDisplayChange)="updateDataToDisplay($event)"/>
+    }
+<!--    <app-filter *ngIf="sources" [sources]="sources"></app-filter>-->
+<!--    <form class="filters-form">-->
+<!--      <div class="wrapper-filter">-->
+<!--        <h4>Filtrer les {{sourceDisplay}}</h4>-->
+
+<!--        <label class="source-filter" for="filter-{{sourceName}}">-->
+<!--          <input type="radio" id="filter-{{sourceName}}" class="input-filters filter-{{sourceName}}-all" name="layers-{{sourceName}}"-->
+<!--                 data-category="all" checked>-->
+<!--          <span class="source-filter-label" data-category="all">Tous ({{events.length}})</span>-->
+<!--        </label>-->
+
+<!--        @for (category of categories; track category.id){-->
+<!--        <label for="category-{{category.id}}" class="category-filter" style="background-image: url('{{category.icon}}')">-->
+<!--         <input type="radio" id="category-{{category.id}}" class="input-filters"><span class="source-filter-label" >{{category.title}}</span>-->
+<!--        </label>-->
+<!--        }-->
+
+<!--      </div>-->
+<!--    </form>-->
+  </div>
+
+<!--  <div #parent></div>-->
+
+<!--@if(eventToDisplay){-->
+<!--  <app-event-popup [data]="eventToDisplay"></app-event-popup>-->
+<!--}-->
+
+<!--  <ng-container *ngComponentOutlet="-->
+<!--        aa;-->
+<!--      " />-->
+  <div id="tooltip" style="display:none;"></div>
+
+</div>
+
+<!--<router-outlet></router-outlet>-->
