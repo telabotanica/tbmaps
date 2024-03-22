@@ -1,10 +1,13 @@
 import {Component, EventEmitter, Input, input, Output} from '@angular/core';
 import {Source} from "../../models/Source";
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-filter',
   standalone: true,
-  imports: [],
+  imports: [
+    CommonModule
+  ],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.css'
 })
@@ -24,18 +27,17 @@ export class FilterComponent {
   handleChange(e: any){
     const selectedData = e.target.value
 
-    if (selectedData === 'evenements'){
-      let eventIndex = this.sources.findIndex((s: any) => s.name === selectedData);
-
-      if (eventIndex !== -1) {
-        this.dataToDisplay = this.sources[eventIndex].data;
-      }
-
-    } else if (selectedData === '26' || selectedData === '27' || selectedData === '28' || selectedData === '29') {
+    if (selectedData === '26' || selectedData === '27' || selectedData === '28' || selectedData === '29') {
       let categoryIndex = this.categories.findIndex((c: any) => c.id === parseInt(selectedData));
 
       if (categoryIndex !== -1){
         this.dataToDisplay = this.categories[categoryIndex].data
+      }
+    } else {
+      let eventIndex = this.sources.findIndex((s: any) => s.name === selectedData);
+
+      if (eventIndex !== -1) {
+        this.dataToDisplay = this.sources[eventIndex].data;
       }
     }
 

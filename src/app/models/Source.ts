@@ -3,13 +3,15 @@ export class Source {
   private _displayName: string;
   private _data: any;
   private _entries: number;
+  private _icon: any;
 
 
-  constructor(name: string, displayName: string, data: any, entries: number) {
+  constructor(name: string, displayName: string, data: any, entries: number, icon: any) {
     this._name = name;
     this._displayName = displayName;
     this._data = data;
     this._entries = entries;
+    this._icon = icon;
   }
 
 
@@ -43,5 +45,14 @@ export class Source {
 
   set entries(value: number) {
     this._entries = value;
+  }
+
+
+  get icon(): any {
+    return this._icon;
+  }
+
+  set icon(value: any) {
+    this._icon = value;
   }
 }

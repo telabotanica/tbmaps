@@ -22,6 +22,8 @@ import {FormsModule} from "@angular/forms";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FilterComponent} from "./forms/filter/filter.component";
 import {Source} from "./models/Source";
+import {forkJoin} from "rxjs";
+import {Trail} from "./models/Trail";
 
 @Component({
   selector: 'app-root',
@@ -81,6 +83,7 @@ export class AppComponent{
   error!: string;
 
   events:any[] = [];
+  trails:any[] = [];
   eventsCategories: any;
 
   mapDiv!: HTMLElement;
@@ -105,22 +108,22 @@ export class AppComponent{
       {
         id: 26,
         title: 'Congrès et conférences',
-        icon: '../assets/images/marker-icon-bleu.svg'
+        icon: 'assets/images/marker-icon-bleu.svg'
       },
       {
         id: 27,
         title: 'Expositions',
-        icon: '../assets/images/marker-icon-mauve.svg'
+        icon: 'assets/images/marker-icon-mauve.svg'
       },
       {
         id: 28,
         title: 'Sorties de terrain',
-        icon: '../assets/images/marker-icon-vert.svg'
+        icon: 'assets/images/marker-icon-vert.svg'
       },
       {
         id: 29,
         title: 'Stages et ateliers',
-        icon: '../assets/images/marker-icon-orange.svg'
+        icon: 'assets/images/marker-icon-orange.svg'
       }
     ]
     this.osmLayer = new L.TileLayer(this.osmFrTilesURL, this.generateLayerOptions('osm'))
@@ -154,69 +157,102 @@ export class AppComponent{
     // this.satelliteLayer.addTo(this.map)
     // this.osmLayer.addTo(this.map)
 
-    // On charge les évènements
-    this.dataService.getEvents().subscribe({
-      next:(data) => {
-        this.sourceCategories = true;
-        this.categories = this.eventsCategories;
+    const getEvents = this.dataService.getEvents();
+    const getTrails = this.dataService.getTrails();
 
-        let filteredData = data.filter((d) => {
-          return this.commonService.filterData(d)
-        })
-
-        filteredData.forEach((event)=>{
-          let categoryId = event.categories[0];
-          let place = this.commonService.parsePlace(event.acf.place)
-          let formatedEndDate = this.commonService.formatDates(event.acf['date_end'])
-          let endDate = formatedEndDate ? event.acf['date_end'] : null;
-          let contact = event.acf.contact[0] ?? null;
-          let htmlStringContent = !!event.content?.rendered ? event.content.rendered : !!event.acf?.description ? event.acf.description : !!event.excerpt?.rendered ? event.excerpt.rendered : '';
-          let categoryDetails = this.eventsCategories.find((e: any) => e.id == categoryId)
-
-          let eventPostData = new Event(
-            event.id,
-            event.title.rendered,
-            place,
-            [place.latlng.lat,place.latlng.lng],
-            this.commonService.formatDates(event.acf.date),
-            formatedEndDate,
-            event.acf.date,
-            endDate,
-            categoryDetails.icon,
-            // '',
-            categoryId,
-            this.baseUrlSite + 'evenements/' + event.category.slug,
-            event.category.name,
-            event.acf.prices,
-            'events',
-          'evenements',
-            contact,
-            contact?.image?.url ?? contact?.image?.sizes?.thumbnail ?? null,
-            this.commonService.generateExcerpt(this.commonService.parseHtmlStringContent(htmlStringContent)),
-            event.link
-          );
-
-          this.events.push(eventPostData);
-        })
-
-        let newSource = new Source('evenements', 'évènements', this.events,  this.events.length);
-        this.sources.push(newSource)
-        this.dataToDisplay = this.events;
-
-        // On filtre les évènements par catégorie
-        this.categories.map((category: any) => {
-          category.data = this.events.filter((e: any) => e.categoryId === category.id);
-          category.dataLength = category.data.length || 0;
-        });
-
-        this.isLoading = false;
-        // console.log(this.events)
-        this.loadMarkers()
-      },
-      error: (err) => {
-        this.error = err.error.message
-      }
+    //Chargement des données
+    forkJoin([getEvents, getTrails]).subscribe((data: any) => {
+      // console.log(data)
+      this.fillEvents(data[0])
+      this.fillTrails(data[1])
+      this.dataToDisplay = this.events;
+      this.isLoading = false;
+      // console.log(this.sources)
+      // console.log(this.events)
+      this.loadMarkers()
     })
+
+  }
+
+  fillEvents(data:any){
+    this.sourceCategories = true;
+    this.categories = this.eventsCategories;
+
+    let filteredData = data.filter((d: any) => {
+      return this.commonService.filterData(d)
+    })
+
+    filteredData.forEach((event: any)=>{
+      let categoryId = event.categories[0];
+      let place = this.commonService.parsePlace(event.acf.place)
+      let formatedEndDate = this.commonService.formatDates(event.acf['date_end'])
+      let endDate = formatedEndDate ? event.acf['date_end'] : null;
+      let contact = event.acf.contact[0] ?? null;
+      let htmlStringContent = !!event.content?.rendered ? event.content.rendered : !!event.acf?.description ? event.acf.description : !!event.excerpt?.rendered ? event.excerpt.rendered : '';
+      let categoryDetails = this.eventsCategories.find((e: any) => e.id == categoryId)
+
+      let eventPostData = new Event(
+        event.id,
+        event.title.rendered,
+        place,
+        [place.latlng.lat,place.latlng.lng],
+        this.commonService.formatDates(event.acf.date),
+        formatedEndDate,
+        event.acf.date,
+        endDate,
+        categoryDetails.icon,
+        // '',
+        categoryId,
+        this.baseUrlSite + 'evenements/' + event.category.slug,
+        event.category.name,
+        event.acf.prices,
+        'events',
+        'evenements',
+        contact,
+        contact?.image?.url ?? contact?.image?.sizes?.thumbnail ?? null,
+        this.commonService.generateExcerpt(this.commonService.parseHtmlStringContent(htmlStringContent)),
+        event.link
+      );
+
+      this.events.push(eventPostData);
+    })
+
+    let newSource = new Source('evenements', 'évènements', this.events,  this.events.length, '');
+    this.sources.push(newSource)
+    // this.dataToDisplay = this.events;
+
+    // On filtre les évènements par catégorie
+    this.categories.map((category: any) => {
+      category.data = this.events.filter((e: any) => e.categoryId === category.id);
+      category.dataLength = category.data.length || 0;
+    });
+  }
+
+  fillTrails(data: any){
+    this.sourceCategories = false;
+
+    data.forEach((trail: any)=>{
+      let trailPostData = new Trail(
+        trail.id,
+        trail.name,
+        trail.displayName,
+        [trail.position.start.lat, trail.position.start.lng],
+        trail.author,
+        trail.details,
+        trail.image,
+        trail.occurrences_count,
+        trail.pathLength,
+        'assets/images/marker-icon-kaki.svg',
+        'trails',
+        'sentiers'
+      )
+
+      this.trails.push(trailPostData)
+    })
+
+    let newSource = new Source('sentiers', 'sentiers', this.trails,  this.trails.length, 'assets/images/marker-icon-kaki.svg');
+    this.sources.push(newSource)
+    // this.dataToDisplay = this.trails;
   }
 
   ngAfterViewInit() {
@@ -252,7 +288,7 @@ export class AppComponent{
       const iconOptions = {
         options: {
             iconUrl: e.icon,
-            shadowUrl: '../assets/images/marker-shadow.png',
+            shadowUrl: 'assets/images/marker-shadow.png',
             iconAnchor: new L.Point(12, 40),//correctly replaces the dot of the pointer
             iconSize: new L.Point(24,40)
           }},
@@ -330,7 +366,7 @@ export class AppComponent{
     const iconOptions = {
         options: {
           iconUrl: e.icon,
-          shadowUrl: '../assets/images/marker-shadow.png',
+          shadowUrl: 'assets/images/marker-shadow.png',
           iconAnchor: new L.Point(12, 40),//correctly replaces the dot of the pointer
           iconSize: new L.Point(24,40)
         }},
@@ -358,7 +394,7 @@ export class AppComponent{
     const iconOptions = {
         options: {
           iconUrl: options.icon,
-          shadowUrl: '../assets/images/marker-shadow.png',
+          shadowUrl: 'assets/images/marker-shadow.png',
           iconAnchor: new L.Point(12, 40),//correctly replaces the dot of the pointer
           iconSize: new L.Point(24,40)
         }},
@@ -526,7 +562,7 @@ export class AppComponent{
             this.addMarkerMe({
               title:'Vous êtes ici!',
               coord: [position.coords.latitude,position.coords.longitude],
-              icon: '../assets/images/marker-icon-user.svg',
+              icon: 'assets/images/marker-icon-user.svg',
               markerType: 'me',
               zoom: 12
             })

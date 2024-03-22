@@ -14,4 +14,8 @@ export class DataService {
   getEvents(){
     return this.http.get<any[]>(this.baseUrlSite + 'wp-json/wp/v2/posts?status=publish&categories=26,27,28,29&per_page=800&order_by=modified&order=desc');
   }
+
+  getTrails(){
+    return this.http.get<any[]>(this.baseUrlSite + 'smartflore-services/trails/');
+  }
 }
