@@ -154,6 +154,7 @@ export class AppComponent{
     // this.satelliteLayer.addTo(this.map)
     // this.osmLayer.addTo(this.map)
 
+    // On charge les évènements
     this.dataService.getEvents().subscribe({
       next:(data) => {
         this.sourceCategories = true;
