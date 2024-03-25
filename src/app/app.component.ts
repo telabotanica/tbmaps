@@ -2,7 +2,7 @@ import {
   Component,
   ComponentFactoryResolver, ComponentRef, effect,
   ElementRef, inject,
-  Inject,
+  Inject, NgZone,
   OnInit, Renderer2, signal, Type,
   ViewChild, ViewContainerRef,
   ViewEncapsulation
@@ -90,6 +90,8 @@ export class AppComponent{
   popupDiv!: HTMLElement;
   closePopupDiv!: HTMLElement;
   // showPopup = signal(false);
+  // showPopup = false;
+  // popupData!: any;
 
   // eventToDisplay!: Event;
   // @ViewChild('parent', {read: ViewContainerRef}) target!: ViewContainerRef;
@@ -102,6 +104,7 @@ export class AppComponent{
   private componentFactoryResolver = inject(ComponentFactoryResolver)
   public dialog = inject(MatDialog);
   private renderer = inject(Renderer2);
+  private zone = inject(NgZone)
 
   constructor(@Inject(DOCUMENT) document: Document) {
     this.eventsCategories = [
@@ -307,7 +310,9 @@ export class AppComponent{
 
       const latLng = new L.LatLng(marker.position.lat, marker.position.lng)
 
-      let leafletMarker = L.marker(latLng, markerOptions).on('click', (e: any) => this.displayPopup(e, marker.data))
+      let leafletMarker = L.marker(latLng, markerOptions).on('click', (e: any) => {
+        this.displayPopup(e, marker.data)
+      })
       this.layerGroup.addLayer(leafletMarker);
     })
 
@@ -437,18 +442,20 @@ export class AppComponent{
    */
 
   displayPopup(e:any, markerData: any){
+    // this.showPopup = true;
     // this.showPopup.set(true)
     // this.eventToDisplay = markerData
 
-    /* // Ajout popop avec angular material
-    this.dialog.open(EventPopupComponent, {
-      data: {
-        data: markerData
-      }
+    // Ajout popop avec angular material
+    this.zone.run(()=>{
+      this.dialog.open(EventPopupComponent, {
+        data: {
+          data: markerData
+        }
+      })
+        .afterClosed()
     })
-      .afterClosed()
 
-     */
 
 /* // Ajout popup avec dynamic component
     let childComponent = this.componentFactoryResolver.resolveComponentFactory(EventPopupComponent);
@@ -460,6 +467,8 @@ export class AppComponent{
 
     // Ajout popup avec service
     // this.eventToDisplay = markerData
+
+    /*
     this.mapDiv.insertAdjacentHTML('afterend', this.popupService.eventPopup(markerData))
     this.popupDiv = document.getElementById('popup-zone') as HTMLElement
     this.closePopupDiv = document.getElementById('close-popup') as HTMLElement
@@ -469,7 +478,7 @@ export class AppComponent{
         this.closePopup();
       });
     }
-
+*/
   }
 
   updateDataToDisplay(e: any){
@@ -477,9 +486,12 @@ export class AppComponent{
     this.loadMarkers();
   }
 
-  closePopup(){
-    this.popupDiv.remove()
-  }
+  // closePopup(){
+  //   // this.showPopup = false
+  //   // console.log(this.showPopup)
+  //   // this.showPopup.set(false)
+  //   this.popupDiv.remove()
+  // }
 
   mapReady(e: L.Map) {
 

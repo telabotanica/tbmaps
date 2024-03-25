@@ -1,7 +1,7 @@
 <div id="popup-zone" class="visible" ><div id="popup"><div id="events" style="overflow:auto;">
-    <div><button (click)="close()">CLOSE</button></div>
+  <button id="close-popup" (click)="close()">x</button>
   <a class="events-category-label" href="{{data.categoryURL}}/" rel="category" title="{{data.category}}" target="_parent">{{data.category}}</a>
-  <h2 id="events-title"><a href="{{data.link}}" target="_parent">{{data.title}}</a></h2>
+  <h2 id="events-title"><a href="{{data.link}}" target="_parent" [innerHTML]="data.title"></a></h2>
   <div class="events-dates float-left" title="{{eventDates}}">
     <time class="events-dates-item">
       <div class="events-dates-day">{{data.formatedStartDate.localDateString[0]}}</div>
@@ -15,14 +15,14 @@
     }
   </div>
   @if(data.excerpt){
-  <p id="events-excerpt">{{data.excerpt}}</p>
+  <p id="events-excerpt" [innerHTML]="data.excerpt"></p>
   }
 
   <div class="events-info">
     <h2 class="events-info-title"><span>Infos pratiques</span></h2>
     <dl class="events-info-items">
       <dt class="events-info-item-title">Adresse</dt>
-      <dd class="events-info-item-text">{{data.place.value}}</dd>
+      <dd class="events-info-item-text" [innerHTML]="data.place.value"></dd>
       <dt class="events-info-item-title">Tarif</dt>
       <dd class="events-info-item-text">{{prix}}</dd>
       </dl>
@@ -32,8 +32,8 @@
     <div class="events-contact-image" style="background-image: url({{data.contactImage}});background-size:cover"></div>
     }
     <div class="events-contact-text">
-      <div class="events-contact-name">{{data.contact.name}}</div>
-      <div class="events-contact-description">{{data.contact.description}}</div>
+      <div class="events-contact-name" [innerHTML]="data.contact.name"></div>
+      <div class="events-contact-description" [innerHTML]="data.contact.description"></div>
       <ul class="events-contact-details">
         <li><a href="tel:{{data.contact.phone}}" class="events-contact-phone" target="_parent">{{data.contact.phone}}</a></li>
         <li><a href="mailto:{{data.contact.email}}" class="events-contact-email" target="_parent">{{data.contact.email}}</a></li>
@@ -44,45 +44,3 @@
   </div>
   <a class="website-button" href="{{data.link}}" target="_parent">Consulter l'évènement</a>
   </div></div>
-
-
-<!--<div id="popup-zone" class="visible" ><div id="popup">-->
-<!--<div id="events" style="overflow:auto;">-->
-<!--  <a class="events-category-label" href="{{data.categoryURL}}/" rel="category" title="${data.category}" target="_parent">{{data.category}}</a>-->
-<!--  <h2 id="events-title">-->
-<!--    <a href="event.link" target="_parent">{{data.title}}</a>-->
-<!--&lt;!&ndash;    {{message}}&ndash;&gt;-->
-<!--  </h2>-->
-
-<!--  <div class="events-dates float-left" title="${data.endDate ?`Du`:`Le`}&nbsp;${data.date}${data.endDate ? `&nbsp;au ${data.endDate}`:""}">-->
-<!--  <time class="events-dates-item" datetime="${data.formatedStartDate.dateString}"><div class="events-dates-day">${data.formatedStartDate.localDateString[0]}</div><div class="events-dates-month">${data.formatedStartDate.localDateString[1]}</div></time>-->
-<!--  ${data.formatedEndDate ? `<time class="events-dates-item is-end" datetime="${data.formatedEndDate.dateString}"><div class="events-dates-day">${data.formatedEndDate.localDateString[0]}</div><div class="events-dates-month">${data.formatedEndDate.localDateString[1]}</div></time>` : ''}-->
-<!--</div>-->
-<!--${data.excerpt ? `<p id="events-excerpt">${data.excerpt}</p>`:''}-->
-<!--<div class="events-info">-->
-<!--  <h2 class="events-info-title"><span>Infos pratiques</span></h2>-->
-<!--  <dl class="events-info-items">-->
-<!--    <dt class="events-info-item-title">Adresse</dt>-->
-<!--    <dd class="events-info-item-text">${data.place.value}</dd>-->
-<!--    <dt class="events-info-item-title">Tarif</dt>-->
-<!--    <dd class="events-info-item-text">${!!data.price ? parseHtmlStringContent(data.price) : 'Gratuit'}</dd>-->
-<!--  </dl>-->
-<!--</div>-->
-<!--<div class="events-contact">-->
-<!--  ${data.contactImage ? `<div class="events-contact-image" style="background-image: url(${data.contactImage});background-size:cover"></div>`:''}-->
-<!--  <div class="events-contact-text">-->
-<!--    <div class="events-contact-name">${data.contact.name}</div>-->
-<!--    <div class="events-contact-description">${data.contact.description}</div>-->
-<!--    <ul class="events-contact-details">-->
-<!--      <li><a href="tel:${data.contact.phone}" class="events-contact-phone" target="_parent">${data.contact.phone}</a></li>-->
-<!--      <li><a href="mailto:${data.contact.email}" class="events-contact-email" target="_parent">${data.contact.email}</a></li>-->
-<!--      <li><a href="${data.contact.website}" rel="noopener noreferrer" class="events-contact-website" target="_parent">${data.contact.website}</a></li>-->
-<!--    </ul>-->
-<!--  </div>-->
-<!--</div>-->
-<!--</div>-->
-<!--<a class="website-button" href="${data.link}" target="_parent">Consulter l'évènement</a>-->
-<!--</div></div></div>-->
-<!--<div>-->
-<!--  AAAAA-->
-<!--</div>-->
