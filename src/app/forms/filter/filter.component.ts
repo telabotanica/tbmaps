@@ -14,6 +14,7 @@ import {CommonModule} from "@angular/common";
 export class FilterComponent {
   @Input() sources: Source[] = [];
   @Input() categories: any;
+  @Input() sourceName!: string;
   @Input() dataToDisplay: any;
   @Output() dataToDisplayChange = new EventEmitter<any>();
   @Output() sourceNameChange = new EventEmitter<any>();
@@ -25,13 +26,15 @@ export class FilterComponent {
       let categoryIndex = this.categories.findIndex((c: any) => c.id === parseInt(selectedData));
 
       if (categoryIndex !== -1){
-        this.dataToDisplay = this.categories[categoryIndex].data
+        this.dataToDisplay = this.categories[categoryIndex].data;
+        this.sourceName = 'evenements'
       }
     } else {
       let eventIndex = this.sources.findIndex((s: any) => s.name === selectedData);
 
       if (eventIndex !== -1) {
         this.dataToDisplay = this.sources[eventIndex].data;
+        this.sourceName = selectedData
       }
     }
 
