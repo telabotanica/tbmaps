@@ -141,4 +141,23 @@ export class CommonService {
     return (this.regexpLng.test(place.latlng.lng) && this.regexpLat.test(place.latlng.lat))
   };
 
+  readUrlParameters(): { name: string, value: string }[] {
+    const expectedParams = ['title', 'logo', 'sources', 'zoom', 'url_site'];
+    const urlParams: { name: string, value: string }[] = [];
+
+    const queryString = decodeURIComponent(window.location.search.substring(1));
+    const parts = queryString.split('&');
+
+    for (const part of parts) {
+      const [paramName, paramValue] = part.split('=');
+
+      if (expectedParams.includes(paramName)) {
+        urlParams.push({ name: paramName, value: paramValue });
+      }
+    }
+
+    return urlParams;
+  }
+
+
 }

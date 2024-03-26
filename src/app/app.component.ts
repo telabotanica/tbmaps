@@ -4,7 +4,7 @@ import {
   Renderer2
 } from '@angular/core';
 import {CommonModule, DOCUMENT, NgComponentOutlet} from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import {ActivatedRoute, RouterOutlet} from '@angular/router';
 import * as L from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import {DataService} from "./services/data.service";
@@ -20,6 +20,7 @@ import {Source} from "./models/Source";
 import {forkJoin} from "rxjs";
 import {Trail} from "./models/Trail";
 import {TrailPopupComponent} from "./components/popups/trail-popup/trail-popup.component";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-root',
@@ -53,6 +54,7 @@ export class AppComponent{
   minZoom = 4;
   maxZoom = 18;
   defaultZoom = 7;
+  displayedZoom!: number;
 
   sources: Source[] = [];
   defaultSource = 'evenements';
@@ -64,13 +66,8 @@ export class AppComponent{
   positionBeforeLocateMe: any = null;
   dataToDisplay: any;
 
-  expectedParams = [
-    'titre',
-    'logo',
-    'sources',
-    'zoom',
-    'url_site'
-  ]
+  logo!: any
+  url_site!: any
 
   error!: string;
 
@@ -87,6 +84,7 @@ export class AppComponent{
   public dialog = inject(MatDialog);
   private renderer = inject(Renderer2);
   private zone = inject(NgZone)
+  private titleService = inject(Title)
 
   constructor(@Inject(DOCUMENT) document: Document) {
     this.eventsCategories = [
@@ -116,9 +114,38 @@ export class AppComponent{
   }
 
   ngOnInit(): void {
+    this.displayedZoom = this.defaultZoom;
+    this.logo = 'https://resources.tela-botanica.org/tb/img/128x128/logo_carre_officiel.png';
+    this.url_site = 'https://www.tela-botanica.org'
+
+    // URL parameters
+    let urlParams = this.commonService.readUrlParameters()
+    for (const param of urlParams) {
+      switch (param.name) {
+        case 'sources':
+          this.sourceName = param.value;
+          break;
+        case 'zoom':
+          this.displayedZoom = parseInt(param.value);
+          break;
+        case 'title':
+          this.titleService.setTitle(param.value)
+          break;
+        case 'logo':
+          this.logo = param.value
+          break;
+        case 'url_site':
+          this.url_site = param.value
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Leaflet map options
     this.options = {
       layers: [this.osmLayer],
-      zoom: this.defaultZoom,
+      zoom: this.displayedZoom,
       minZoom : this.minZoom,
       maxZoom: this.maxZoom,
       maxBounds : [[-85.0, -180.0], [85.0, 180.0]],
@@ -144,7 +171,15 @@ export class AppComponent{
     forkJoin([getEvents, getTrails]).subscribe((data: any) => {
       this.fillEvents(data[0])
       this.fillTrails(data[1])
-      this.dataToDisplay = this.events;
+
+      this.sources
+        .map(source => {
+          if (source.name === this.sourceName) {
+            this.dataToDisplay = source.data
+          }
+        })
+
+      // this.dataToDisplay = this.events;
       this.isLoading = false;
 
       this.loadMarkers()
@@ -356,7 +391,6 @@ export class AppComponent{
   }
 
   displayPopup(e:any, markerData: any){
-
     // Ajout popup avec angular material
     this.zone.run(()=>{ // A utiliser pour charger les datas on init sinon ça load pas les infos dans le template, je sais pas pourquoi
       if (this.sourceName == 'evenements' || this.sourceName == '26' || this.sourceName == '27' || this.sourceName == '28' || this.sourceName == '29'){

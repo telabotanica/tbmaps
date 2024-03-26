@@ -23,14 +23,14 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build
 
-Run `ng build --configuration production` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `ng build --configuration production --base-href=/tbmaps/` to build the project. The build artifacts will be stored in the `dist/` directory.
 
 You will need to copy the content of the `dist/tbmaps-angular/browser` on your server
 
 ## Usage
 
 **You can use some parameters to customize the map** :
-- `sources` : a coma separated list of sources for the map
+- `sources` : the main source to display (`evenements` by default, another option is `sentiers`)
 - `logo` : an image url for your logo to be displayed on bottom left of the map
 - `title` : a title for your map
 - `website_url` : the link of your logo to your website
