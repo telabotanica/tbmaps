@@ -12,7 +12,7 @@ export class DataService {
   constructor(private http: HttpClient) { }
 
   getEvents(){
-    return this.http.get<any[]>(this.baseUrlSite + 'wp-json/wp/v2/posts?status=publish&categories=26,27,28,29&per_page=800&order_by=modified&order=desc');
+    return this.http.get<any[]>( 'https://www.tela-botanica.org/wp-json/wp/v2/posts?status=publish&categories=26,27,28,29&per_page=800&order_by=modified&order=desc');
   }
 
   getTrails(){

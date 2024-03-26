@@ -233,7 +233,6 @@ export class AppComponent{
   }
 
   ngAfterViewInit() {
-    // this.mapDiv = document.getElementById('map') as HTMLElement
     this.mapDiv = document.getElementById('filters-zone') as HTMLElement
   }
 
@@ -391,8 +390,6 @@ export class AppComponent{
             }
           })
             .afterClosed()
-
-          console.log(occurrences)
         })
       }
     })
