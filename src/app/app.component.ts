@@ -21,11 +21,12 @@ import {forkJoin} from "rxjs";
 import {Trail} from "./models/Trail";
 import {TrailPopupComponent} from "./components/popups/trail-popup/trail-popup.component";
 import {Title} from "@angular/platform-browser";
+import {LeafletMarkerClusterModule} from "@asymmetrik/ngx-leaflet-markercluster";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LeafletModule, NgxLeafletFullscreenModule, EventPopupComponent, FormsModule, EventPopupComponent, NgComponentOutlet, FilterComponent, CommonModule],
+  imports: [CommonModule, RouterOutlet, LeafletModule, NgxLeafletFullscreenModule, EventPopupComponent, FormsModule, EventPopupComponent, NgComponentOutlet, FilterComponent, CommonModule, LeafletMarkerClusterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -35,6 +36,8 @@ export class AppComponent{
   markers: L.Marker[] = [];
   isLoading = true;
   layerGroup = L.layerGroup();
+  markerClusterGroup!: L.MarkerClusterGroup;
+  markerClusterData = [];
 
   options: any;
   osmFrTilesURL = 'https://a.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
@@ -116,7 +119,9 @@ export class AppComponent{
   ngOnInit(): void {
     this.displayedZoom = this.defaultZoom;
     this.logo = 'https://resources.tela-botanica.org/tb/img/128x128/logo_carre_officiel.png';
-    this.url_site = 'https://www.tela-botanica.org'
+    this.url_site = 'https://www.tela-botanica.org';
+
+    this.markerClusterGroup = L.markerClusterGroup({removeOutsideVisibleBounds: true, showCoverageOnHover: false});
 
     // URL parameters
     let urlParams = this.commonService.readUrlParameters()
@@ -287,6 +292,10 @@ export class AppComponent{
       this.layerGroup.clearLayers();
     }
 
+    if (this.map.hasLayer(this.markerClusterGroup)) {
+      this.markerClusterGroup.clearLayers();
+    }
+
     this.layerGroup = L.layerGroup();
 
     this.dataToDisplay.forEach((e: any) => {
@@ -316,9 +325,11 @@ export class AppComponent{
         this.displayPopup(e, marker.data)
       })
       this.layerGroup.addLayer(leafletMarker);
+      this.markerClusterGroup.addLayer(leafletMarker)
     })
 
-    this.map.addLayer(this.layerGroup)
+    // this.map.addLayer(this.layerGroup)
+    this.map.addLayer(this.markerClusterGroup)
 
     return markers;
   }
