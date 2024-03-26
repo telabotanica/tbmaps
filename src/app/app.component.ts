@@ -1,11 +1,7 @@
 import {
-  Component,
-  ComponentFactoryResolver, ComponentRef, effect,
-  ElementRef, inject,
+  Component,inject,
   Inject, NgZone,
-  OnInit, Renderer2, signal, Type,
-  ViewChild, ViewContainerRef,
-  ViewEncapsulation
+  Renderer2
 } from '@angular/core';
 import {CommonModule, DOCUMENT, NgComponentOutlet} from '@angular/common';
 import { RouterOutlet } from '@angular/router';
@@ -17,26 +13,22 @@ import {Event} from "./models/Event";
 import {environment} from "../environments/environment";
 import {NgxLeafletFullscreenModule} from "@runette/ngx-leaflet-fullscreen";
 import {EventPopupComponent} from "./components/popups/event-popup/event-popup.component";
-import {PopupService} from "./services/popup.service";
 import {FormsModule} from "@angular/forms";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FilterComponent} from "./forms/filter/filter.component";
 import {Source} from "./models/Source";
 import {forkJoin} from "rxjs";
 import {Trail} from "./models/Trail";
+import {TrailPopupComponent} from "./components/popups/trail-popup/trail-popup.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, LeafletModule, NgxLeafletFullscreenModule, EventPopupComponent, FormsModule, EventPopupComponent, NgComponentOutlet, FilterComponent, CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  // encapsulation: ViewEncapsulation.None
+  styleUrl: './app.component.css'
 })
 export class AppComponent{
-  // @ViewChild('map', { static: false }) mapElement!: ElementRef;
-  // @ViewChild(EventPopupComponent) popupComponent : any;
-
   baseUrlSite = environment.baseUrlSite;
   map!: L.Map;
   markers: L.Marker[] = [];
@@ -79,7 +71,7 @@ export class AppComponent{
     'zoom',
     'url_site'
   ]
-  // imagesPath = '../assets/images/';
+
   error!: string;
 
   events:any[] = [];
@@ -89,19 +81,9 @@ export class AppComponent{
   mapDiv!: HTMLElement;
   popupDiv!: HTMLElement;
   closePopupDiv!: HTMLElement;
-  // showPopup = signal(false);
-  // showPopup = false;
-  // popupData!: any;
-
-  // eventToDisplay!: Event;
-  // @ViewChild('parent', {read: ViewContainerRef}) target!: ViewContainerRef;
-  // private componentRef!: ComponentRef<any>;
-  // dialogRef!: MatDialogRef<EventPopupComponent>;
 
   private commonService = inject(CommonService)
   private dataService = inject(DataService)
-  private popupService = inject(PopupService)
-  private componentFactoryResolver = inject(ComponentFactoryResolver)
   public dialog = inject(MatDialog);
   private renderer = inject(Renderer2);
   private zone = inject(NgZone)
@@ -155,23 +137,16 @@ export class AppComponent{
 
     this.sourceDisplay = 'évènements'
 
-    // var layerControl = L.control.layers(baseMaps).addTo(this.map);
-
-    // this.satelliteLayer.addTo(this.map)
-    // this.osmLayer.addTo(this.map)
-
     const getEvents = this.dataService.getEvents();
     const getTrails = this.dataService.getTrails();
 
     //Chargement des données
     forkJoin([getEvents, getTrails]).subscribe((data: any) => {
-      // console.log(data)
       this.fillEvents(data[0])
       this.fillTrails(data[1])
       this.dataToDisplay = this.events;
       this.isLoading = false;
-      // console.log(this.sources)
-      // console.log(this.events)
+
       this.loadMarkers()
     })
 
@@ -238,13 +213,13 @@ export class AppComponent{
       let trailPostData = new Trail(
         trail.id,
         trail.name,
-        trail.displayName,
+        trail.display_name,
         [trail.position.start.lat, trail.position.start.lng],
         trail.author,
         trail.details,
         trail.image,
         trail.occurrences_count,
-        trail.pathLength,
+        trail.path_length,
         'assets/images/marker-icon-kaki.svg',
         'trails',
         'sentiers'
@@ -255,7 +230,6 @@ export class AppComponent{
 
     let newSource = new Source('sentiers', 'sentiers', this.trails,  this.trails.length, 'assets/images/marker-icon-kaki.svg');
     this.sources.push(newSource)
-    // this.dataToDisplay = this.trails;
   }
 
   ngAfterViewInit() {
@@ -270,12 +244,6 @@ export class AppComponent{
       noWrap: true
     };
   }
-
-  // initMarkers() {
-  //   let markers:any = [];
-  //
-  //   markers = this.loadEventsMarkers(markers)
-  // }
 
   loadMarkers(){
     let markers:any = [];
@@ -292,7 +260,7 @@ export class AppComponent{
         options: {
             iconUrl: e.icon,
             shadowUrl: 'assets/images/marker-shadow.png',
-            iconAnchor: new L.Point(12, 40),//correctly replaces the dot of the pointer
+            iconAnchor: new L.Point(12, 40),
             iconSize: new L.Point(24,40)
           }},
         icon = L.Icon.extend(iconOptions),
@@ -317,51 +285,6 @@ export class AppComponent{
     })
 
     this.map.addLayer(this.layerGroup)
-
-    // var markersLayer = L.featureGroup().addTo(this.map);
-    // markersLayer.on("click", function (event) {
-    //   console.log(event)
-    //   // var clickedMarker = event.layer;
-    //   // do some stuff…
-    // });
-
-    // markers.forEach((marker:any) => {
-     // let popup =  L.popup()
-     //   .setLatLng([marker.position.lat, marker.position.lng])
-     //   .setContent(this.popupService.eventPopup(marker.data))
-      // let popup = L.popup([marker.position.lat, marker.position.lng], {content: 'Hello'})
-      // let popup = L.popup({
-      //   pane: 'fixed',
-      //   className: 'popup'
-      // })
-
-/*
-    L.marker([marker.position.lat, marker.position.lng], {icon: new icon()})
-       .addTo(this.map)
-       // .addTo(markersLayer)
-        // .bindPopup(popup)
-        .on('click', (e: any) => this.displayPopup(e, marker.data))
-        // .on('click', (e: any) => {
-        //   // console.log(this.eventToDisplay)
-        //   // this.eventToDisplay = marker.data
-        //   setTimeout(() =>{
-        //     this.eventToDisplay = marker.data
-        //     this.displayPopup(e, marker.data)
-        //     console.log(this.eventToDisplay)
-        //   }, 100)
-        //     // this.showPopup.set(true)
-        //   this.eventToDisplay = marker.data
-        //   console.log(this.eventToDisplay)
-        // })
-
-      // this.map.panTo(marker.position);
-
-      // marker2.properties.data = marker.data
-
-     // marker2.addTo(markersLayer)
-    })
-*/
-
 
     return markers;
   }
@@ -433,52 +356,46 @@ export class AppComponent{
 
   }
 
-  /*
-  displayPopupInfos(markerData: any){
-    // console.log(markerData)
-    this.showPopup.set(true)
-    this.eventToDisplay = markerData
-  }
-   */
-
   displayPopup(e:any, markerData: any){
-    // this.showPopup = true;
-    // this.showPopup.set(true)
-    // this.eventToDisplay = markerData
 
-    // Ajout popop avec angular material
-    this.zone.run(()=>{
-      this.dialog.open(EventPopupComponent, {
-        data: {
-          data: markerData
-        }
-      })
-        .afterClosed()
+    // Ajout popup avec angular material
+    this.zone.run(()=>{ // A utiliser pour charger les datas on init sinon ça load pas les infos dans le template, je sais pas pourquoi
+      if (this.sourceName == 'evenements' || this.sourceName == '26' || this.sourceName == '27' || this.sourceName == '28' || this.sourceName == '29'){
+        this.dialog.open(EventPopupComponent, {
+          data: {
+            data: markerData
+          }
+        })
+          .afterClosed()
+      } else if (this.sourceName == 'sentiers'){
+        let occurrences:any[] = [];
+
+        this.dataService.getTrailDetails(markerData.details).subscribe((trailDetails: any) => {
+          trailDetails.occurrences.forEach((occurrence: any) => {
+
+            let taxon = {
+              "full_scientific_name" : occurrence.taxon.full_scientific_name,
+              "scientific_name" : occurrence.taxon.scientific_name,
+              "name_id": occurrence.taxon.name_id,
+              "referentiel": occurrence.taxon.taxon_repository,
+              "position": occurrence.position,
+              "images": occurrence.images
+            }
+
+            occurrences.push(taxon)
+          })
+          this.dialog.open(TrailPopupComponent, {
+            data: {
+              data: markerData,
+              occurrences: occurrences
+            }
+          })
+            .afterClosed()
+
+          console.log(occurrences)
+        })
+      }
     })
-
-
-/* // Ajout popup avec dynamic component
-    let childComponent = this.componentFactoryResolver.resolveComponentFactory(EventPopupComponent);
-    this.componentRef = this.target.createComponent(EventPopupComponent);
-    const instance = this.componentRef.instance;
-    instance.data = markerData;
-    instance.target = this.target;
-*/
-
-    // Ajout popup avec service
-    // this.eventToDisplay = markerData
-
-    /*
-    this.mapDiv.insertAdjacentHTML('afterend', this.popupService.eventPopup(markerData))
-    this.popupDiv = document.getElementById('popup-zone') as HTMLElement
-    this.closePopupDiv = document.getElementById('close-popup') as HTMLElement
-
-    if (this.closePopupDiv && this.popupDiv) {
-      this.renderer.listen(this.closePopupDiv, 'click', () => {
-        this.closePopup();
-      });
-    }
-*/
   }
 
   updateDataToDisplay(e: any){
@@ -486,12 +403,9 @@ export class AppComponent{
     this.loadMarkers();
   }
 
-  // closePopup(){
-  //   // this.showPopup = false
-  //   // console.log(this.showPopup)
-  //   // this.showPopup.set(false)
-  //   this.popupDiv.remove()
-  // }
+  updateSourceName(e: any){
+    this.sourceName = e
+  }
 
   mapReady(e: L.Map) {
 
@@ -611,55 +525,4 @@ export class AppComponent{
   //   console.log($event.target.getLatLng());
   // }
 
-  /*
-  map!: L.Map;
-  baseUrlSite = 'https://www.tela-botanica.org/';
-
-  ngOnInit(): void {
-    this.initMap();
-  }
-
-  initMap(): void {
-
-    const osmFrTilesURL = 'https://a.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
-      googleTilesURL = 'https://mt1.google.com/vt/lyrs=y@12345&hl=fr&src=app&x={x}&y={y}&z={z}',
-      profileURL = this.baseUrlSite + `wp-content/plugins/tela-botanica/profil-par-id.php?id=`,
-      defaultCoord = [46,2],
-      layerAttributions = {
-        osm: `Map data &copy; <a href="https://openstreetmap.org" target="_blank">OpenStreetMap</a> contributors,
-		 <a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC-BY-SA</a>`,
-        google:`Map data &copy;${new Date().getFullYear()} <a href="https://maps.google.com" target="_blank">Google</a>`
-      },
-      maxZoom = 18,
-      defaultZoom =5,
-      defaultSource = 'evenements',
-      generateLayerOptions = (layer: 'osm' | 'google') => {
-        return {
-          attribution: layerAttributions[layer],
-          maxZoom: maxZoom,
-          noWrap: true
-        };
-      },
-      osmLayer = new L.TileLayer(osmFrTilesURL, generateLayerOptions('osm')),
-      satelliteLayer = new L.TileLayer(googleTilesURL, generateLayerOptions('google')),
-      expectedParams = [
-        'titre',
-        'logo',
-        'sources',
-        'zoom',
-        'url_site'
-      ],
-      markers = [];
-
-
-    this.map = L.map('map').setView([46,2], 5); // Coordonnées initiales et niveau de zoom
-    // L.tileLayer(osmFrTilesURL)
-    //   .addTo(this.map); // Ajouter une couche de tuiles (tile layer)
-    // satelliteLayer.addTo(this.map);
-    osmLayer.addTo(this.map);
-
-    // spiderfier = new OverlappingMarkerSpiderfier(this.map, {nearbyDistance:10});
-  }
-*/
-  // title = 'tbmaps-angular';
 }

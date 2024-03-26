@@ -1,0 +1,37 @@
+<div id="popup-zone" class="visible">
+  <div id="popup" class="popup-trail">
+    <div id="events" style="overflow:auto;">
+      <button id="close-popup" (click)="close()">x</button>
+      <a class="events-category-label" href="#" rel="category" title="{{data.display_name}}" target="_parent">Sentier Smart'Flore</a>
+      <h2 id="events-title"><a href="#" target="_parent" [innerHTML]="data.name"></a></h2>
+
+      <div class="events-contact-image" style="background-image: url({{data.image.url}});background-size:cover"></div>
+    </div>
+
+    <div class="events-info">
+      <h2 class="events-info-title"><span>Infos sur le sentier</span></h2>
+
+        <dl class="events-info-items">
+          <dt class="events-info-item-title">Créée par</dt>
+          <dd class="events-info-item-text" [innerHTML]="data.author"></dd>
+          <dt class="events-info-item-title">Nombre d'occurrences</dt>
+          <dd class="events-info-item-text">{{data.occurrences_count}} occurrences</dd>
+          <dt class="events-info-item-title">Longueur du sentier</dt>
+          <dd class="events-info-item-text">{{data.path_length}} m</dd>
+        </dl>
+    </div>
+
+    <h2 class="events-info-title"><span>Plus d'informations</span></h2>
+    <div>
+      <h3 class="taxons-title">Liste des taxons</h3>
+      <ul>
+      @for (occurrence of occurrences; track occurrence.name_id) {
+        <li [innerHTML]="occurrence.scientific_name"></li>
+      }
+      </ul>
+    </div>
+    <div class="events-contact">
+      Rendez-vous sur l'application mobile Smart'flore pour plus d'informations
+    </div>
+  </div>
+</div>

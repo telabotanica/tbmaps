@@ -16,13 +16,7 @@ export class FilterComponent {
   @Input() categories: any;
   @Input() dataToDisplay: any;
   @Output() dataToDisplayChange = new EventEmitter<any>();
-  // displayedSource!: Source
-
-  ngOnInit(){
-    // console.log(this.categories)
-    // console.log(this.sources)
-    // console.log(this.dataToDisplay)
-  }
+  @Output() sourceNameChange = new EventEmitter<any>();
 
   handleChange(e: any){
     const selectedData = e.target.value
@@ -42,6 +36,7 @@ export class FilterComponent {
     }
 
     this.dataToDisplayChange.emit(this.dataToDisplay)
+    this.sourceNameChange.emit(selectedData)
   }
 
 

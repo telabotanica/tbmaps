@@ -578,6 +578,15 @@ a, a:active, a:visited {
 #popup .events-contact a:hover {
   background-color: rgba(0,105,121,.1);
 }
+
+.popup-trail {
+  overflow: scroll !important;
+}
+
+.taxons-title {
+  margin: 1rem 0 0.5rem 0;
+  text-decoration: underline;
+}
 /*+----------------------------------------------------------+*/
 @media (max-width: 768px) {
   .button.around-me {

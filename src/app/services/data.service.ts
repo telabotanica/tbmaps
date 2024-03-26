@@ -18,4 +18,8 @@ export class DataService {
   getTrails(){
     return this.http.get<any[]>(this.baseUrlSite + 'smartflore-services/trails/');
   }
+
+  getTrailDetails(url: any){
+    return this.http.get<any[]>(url);
+  }
 }
