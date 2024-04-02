@@ -4,7 +4,7 @@ import {
   Renderer2
 } from '@angular/core';
 import {CommonModule, DOCUMENT, NgComponentOutlet} from '@angular/common';
-import {ActivatedRoute, RouterOutlet} from '@angular/router';
+import {RouterOutlet} from '@angular/router';
 import * as L from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import {DataService} from "./services/data.service";
@@ -22,6 +22,8 @@ import {Trail} from "./models/Trail";
 import {TrailPopupComponent} from "./components/popups/trail-popup/trail-popup.component";
 import {Title} from "@angular/platform-browser";
 import {LeafletMarkerClusterModule} from "@asymmetrik/ngx-leaflet-markercluster";
+import {Obs} from "./models/Obs";
+import {ObsPopupComponent} from "./components/popups/obs-popup/obs-popup.component";
 
 @Component({
   selector: 'app-root',
@@ -54,7 +56,7 @@ export class AppComponent{
   osmLayer: any;
   satelliteLayer: any;
 
-  minZoom = 4;
+  minZoom = 2;
   maxZoom = 18;
   defaultZoom = 7;
   displayedZoom!: number;
@@ -76,6 +78,7 @@ export class AppComponent{
 
   events:any[] = [];
   trails:any[] = [];
+  observations:any[] = [];
   eventsCategories: any;
 
   mapDiv!: HTMLElement;
@@ -171,11 +174,13 @@ export class AppComponent{
 
     const getEvents = this.dataService.getEvents();
     const getTrails = this.dataService.getTrails();
+    const getObservations = this.dataService.getObservations(19000);
 
     //Chargement des données
-    forkJoin([getEvents, getTrails]).subscribe((data: any) => {
+    forkJoin([getEvents, getTrails, getObservations]).subscribe((data: any) => {
       this.fillEvents(data[0])
       this.fillTrails(data[1])
+      this.fillObservations(data[2].images)
 
       this.sources
         .map(source => {
@@ -184,7 +189,6 @@ export class AppComponent{
           }
         })
 
-      // this.dataToDisplay = this.events;
       this.isLoading = false;
 
       this.loadMarkers()
@@ -272,6 +276,52 @@ export class AppComponent{
     this.sources.push(newSource)
   }
 
+  fillObservations(data: any){
+    this.sourceCategories = false;
+
+    const observationsGrouped = data.reduce((acc: any, image: any) => {
+      const idObs = image.obs.id_obs;
+      const cleanUrl = image.url_photo.split(',')[0];
+      const existingEntry = acc.find((entry: any) => entry.id === idObs);
+      if (existingEntry) {
+        existingEntry.images.push({ ...image, url_photo: cleanUrl });
+      } else {
+        acc.push({
+          id: idObs,
+          images: [{ ...image, url_photo: cleanUrl }]
+        });
+      }
+      return acc;
+    }, []);
+
+    this.observations = observationsGrouped.map((observation: any) => {
+      return new Obs(
+        observation.id,
+        observation.images[0].obs.nom_referentiel,
+        observation.images[0].obs.nom_ret,
+        observation.images[0].obs.nom_ret_nn,
+        observation.images[0].obs.nom_sel,
+        observation.images[0].obs.nom_sel_nn,
+        observation.images[0].obs.famille,
+        observation.images[0].obs.observateur,
+        observation.images[0].obs.date_obs,
+        observation.images[0].obs.commentaire,
+        observation.images[0].obs.type_donnees,
+        observation.images[0].obs.milieu,
+        observation.images[0].obs.url_ip,
+        [observation.images[0].obs.latitude, observation.images[0].obs.longitude],
+        observation.images.map((image: any) => ({ ...image, url_photo: image.url_photo.split(',')[0] })),
+        observation.images[0].utilisateur,
+        'assets/images/marker-icon-jaune.svg',
+        'observations',
+        'observations'
+      );
+    });
+
+    let newSource = new Source('observations', 'observations', this.observations,  this.observations.length, 'assets/images/marker-icon-jaune.svg');
+    this.sources.push(newSource)
+  }
+
   ngAfterViewInit() {
     this.mapDiv = document.getElementById('filters-zone') as HTMLElement
   }
@@ -332,35 +382,6 @@ export class AppComponent{
     this.map.addLayer(this.markerClusterGroup)
 
     return markers;
-  }
-
-  addMarker2(e: any, markers:any = null){
-
-    const iconOptions = {
-        options: {
-          iconUrl: e.icon,
-          shadowUrl: 'assets/images/marker-shadow.png',
-          iconAnchor: new L.Point(12, 40),//correctly replaces the dot of the pointer
-          iconSize: new L.Point(24,40)
-        }},
-      icon = L.Icon.extend(iconOptions),
-      markerOptions = {
-        icon: new icon()
-      };
-
-    let marker = {
-      position: { lat: e.coord[0], lng: e.coord[1] },
-      icon: new icon(),
-      draggable: false,
-      data: e
-    }
-    markers.push(marker)
-
-    const latLng = new L.LatLng(marker.position.lat, marker.position.lng)
-
-    L.marker(latLng, markerOptions)
-      .addTo(this.map)
-      .on('click', (e: any) => this.displayPopup(e, marker.data))
   }
 
   addMarkerMe(options: any){
@@ -436,6 +457,13 @@ export class AppComponent{
           })
             .afterClosed()
         })
+      } else if (this.sourceName == 'observations') {
+        this.dialog.open(ObsPopupComponent, {
+          data: {
+            data: markerData
+          }
+        })
+          .afterClosed()
       }
     })
   }
@@ -450,7 +478,6 @@ export class AppComponent{
   }
 
   mapReady(e: L.Map) {
-
     this.map = e;
 
     let baseMaps = {
@@ -459,15 +486,7 @@ export class AppComponent{
     };
 
     let layerControl = L.control.layers(baseMaps).addTo(this.map);
-    // let spiderfier = new OverlappingMarkerSpiderfier(this.map, {nearbyDistance:10});
     this.aroundMeButton()
-
-    // Reset the map
-    // setTimeout(() => {
-    //   e.invalidateSize();
-    // }, 0);
-
-    // this.map.setView([46,20], 7)
   }
 
   setAroundMeButton(button: any, doLocate = true, aroundMeDiv: any = null){

@@ -23,18 +23,18 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build
 
-Run `ng build --configuration production --base-href=/tbmaps/` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `ng build --configuration production --base-href=/tbmaps/` to build the project on production server. The build artifacts will be stored in the `dist/` directory.
 
 You will need to copy the content of the `dist/tbmaps-angular/browser` on your server
 
 ## Usage
 
 **You can use some parameters to customize the map** :
-- `sources` : the main source to display (`evenements` by default, another option is `sentiers`)
+- `sources` : the main source to display (`evenements` by default, the other options option are `sentiers` and `observations`)
 - `logo` : an image url for your logo to be displayed on bottom left of the map
 - `title` : a title for your map
 - `website_url` : the link of your logo to your website
-- `zoom` : an integer between 4 and 18  
+- `zoom` : an integer between 2 and 18  (the default zoom is `7`)
 
 To add some more custom parameters you will have to extend the app see **Extend** section below.
 
@@ -52,7 +52,7 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 
-## Default source
+## Default source for events
 
 Default source is Tela-botanica (geolocated) post events called ***evenements*** (Évènements): 
 * Page :  [https://www.tela-botanica.org/evenements/](https://www.tela-botanica.org/evenements/).

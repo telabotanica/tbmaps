@@ -5,7 +5,12 @@
 export const environment = {
   production: false,
   // baseUrlSite: 'https://beta.tela-botanica.org/test/',
-  baseUrlSite: 'https://www.tela-botanica.org/'
+  baseUrlSite: 'https://www.tela-botanica.org/',
+  baseURLServicesCelTpl: 'https://api.tela-botanica.org/service:cel:CelWidgetMapPoint/stations',
+  celUrlImages: 'https://api.tela-botanica.org/service:cel:CelWidgetImage/*',
+  delUrlObs: 'https://api.tela-botanica.org/service:del:0.1/observations',
+  membersProfil: 'https://www.tela-botanica.org/membres/'
+  // celUrlExport: 'https://api.tela-botanica.org/service:cel:CelWidgetExport/'
 };
 
 /*

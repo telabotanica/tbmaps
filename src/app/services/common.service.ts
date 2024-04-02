@@ -159,5 +159,22 @@ export class CommonService {
     return urlParams;
   }
 
+  tronquerEmail(email: string){
+    const atIndex = email.indexOf('@');
+    if (atIndex !== -1) {
+      const truncated = email.substring(0, atIndex + 1) + '...';
+      return truncated;
+    }
+    return email; // Si aucun '@' n'est trouvé, retourne l'email inchangé
+  }
+
+  // Formatage du nom utilisateur pour l'affichage du profil sur le site tela
+  formatUsername(username: string) {
+    // Supprimer les accents
+    const normalizedUsername = username.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Mettre en minuscules et remplacer les espaces par des tirets
+    const formattedUsername = normalizedUsername.toLowerCase().replace(/\s+/g, "-");
+    return formattedUsername;
+  }
 
 }

@@ -26,7 +26,7 @@
       <h3 class="taxons-title">Liste des taxons</h3>
       <ul>
       @for (occurrence of occurrences; track occurrence.name_id) {
-        <li [innerHTML]="occurrence.scientific_name"></li>
+        <li><a href="https://www.tela-botanica.org/{{occurrence.referentiel}}-nn-{{occurrence.name_id}}" target="_blank" [innerHTML]="occurrence.scientific_name"></a></li>
       }
       </ul>
     </div>

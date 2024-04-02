@@ -587,6 +587,15 @@ a, a:active, a:visited {
   margin: 1rem 0 0.5rem 0;
   text-decoration: underline;
 }
+
+.obs-popup-ip-section {
+  flex-direction: column;
+}
+
+.popup-photos {
+  margin: 1rem 0;
+}
+
 /*+----------------------------------------------------------+*/
 @media (max-width: 768px) {
   .button.around-me {

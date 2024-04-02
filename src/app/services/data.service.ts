@@ -8,6 +8,8 @@ import {HttpClient} from "@angular/common/http";
 export class DataService {
 
   private baseUrlSite = environment.baseUrlSite;
+  private celUrlImages = environment.celUrlImages;
+  private delUrlObs = environment.delUrlObs;
 
   constructor(private http: HttpClient) { }
 
@@ -21,5 +23,9 @@ export class DataService {
 
   getTrailDetails(url: any){
     return this.http.get<any[]>(url);
+  }
+
+  getObservations(limite: number){
+      return this.http.get<any[]>(this.celUrlImages + '?limit=' + limite);
   }
 }
