@@ -2,8 +2,8 @@
   <div id="popup" class="popup-trail">
     <div id="events" style="overflow:auto;">
       <button id="close-popup" (click)="close()">x</button>
-      <a class="events-category-label" href="#" rel="category" title="{{data.display_name}}" target="_parent">Sentier Smart'Flore</a>
-      <h2 id="events-title"><a href="#" target="_parent" [innerHTML]="data.name"></a></h2>
+      <a class="events-category-label" href="https://www.tela-botanica.org/smart-form/" rel="category" title="{{data.display_name}}" target="_blank">Sentier Smart'Flore</a>
+      <h2 id="events-title"><span [innerHTML]="data.name"></span></h2>
 
       <div class="events-contact-image" style="background-image: url({{data.image.url}});background-size:cover"></div>
     </div>

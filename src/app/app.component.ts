@@ -6,6 +6,8 @@ import {
 import {CommonModule, DOCUMENT, NgComponentOutlet} from '@angular/common';
 import {RouterOutlet} from '@angular/router';
 import * as L from 'leaflet';
+import 'leaflet.markercluster';
+import {MarkerClusterGroup, markerClusterGroup } from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import {DataService} from "./services/data.service";
 import {CommonService} from "./services/common.service";
@@ -28,7 +30,19 @@ import {ObsPopupComponent} from "./components/popups/obs-popup/obs-popup.compone
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LeafletModule, NgxLeafletFullscreenModule, EventPopupComponent, FormsModule, EventPopupComponent, NgComponentOutlet, FilterComponent, CommonModule, LeafletMarkerClusterModule],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    LeafletModule,
+    NgxLeafletFullscreenModule,
+    EventPopupComponent,
+    FormsModule,
+    EventPopupComponent,
+    NgComponentOutlet,
+    FilterComponent,
+    CommonModule,
+    LeafletMarkerClusterModule
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -39,7 +53,8 @@ export class AppComponent{
   isLoading = true;
   layerGroup = L.layerGroup();
   markerClusterGroup!: L.MarkerClusterGroup;
-  markerClusterData = [];
+  markerClusterData: any[] = [];
+  markerClusterOptions: L.MarkerClusterGroupOptions;
 
   options: any;
   osmFrTilesURL = 'https://a.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
@@ -117,14 +132,13 @@ export class AppComponent{
     ]
     this.osmLayer = new L.TileLayer(this.osmFrTilesURL, this.generateLayerOptions('osm'))
     this.satelliteLayer = new L.TileLayer(this.googleTilesURL, this.generateLayerOptions('google'))
+    this.markerClusterOptions = {removeOutsideVisibleBounds: true, showCoverageOnHover: false}
   }
 
   ngOnInit(): void {
     this.displayedZoom = this.defaultZoom;
     this.logo = 'https://resources.tela-botanica.org/tb/img/128x128/logo_carre_officiel.png';
     this.url_site = 'https://www.tela-botanica.org';
-
-    this.markerClusterGroup = L.markerClusterGroup({removeOutsideVisibleBounds: true, showCoverageOnHover: false});
 
     // URL parameters
     let urlParams = this.commonService.readUrlParameters()
@@ -136,7 +150,7 @@ export class AppComponent{
         case 'zoom':
           this.displayedZoom = parseInt(param.value);
           break;
-        case 'title':
+        case 'titre':
           this.titleService.setTitle(param.value)
           break;
         case 'logo':
@@ -171,29 +185,6 @@ export class AppComponent{
     }
 
     this.sourceDisplay = 'évènements'
-
-    const getEvents = this.dataService.getEvents();
-    const getTrails = this.dataService.getTrails();
-    const getObservations = this.dataService.getObservations(19000);
-
-    //Chargement des données
-    forkJoin([getEvents, getTrails, getObservations]).subscribe((data: any) => {
-      this.fillEvents(data[0])
-      this.fillTrails(data[1])
-      this.fillObservations(data[2].images)
-
-      this.sources
-        .map(source => {
-          if (source.name === this.sourceName) {
-            this.dataToDisplay = source.data
-          }
-        })
-
-      this.isLoading = false;
-
-      this.loadMarkers()
-    })
-
   }
 
   fillEvents(data:any){
@@ -336,6 +327,7 @@ export class AppComponent{
 
   loadMarkers(){
     let markers:any = [];
+    const clusterData : any[] = []
 
     // On supprime les markers existant
     if (this.map.hasLayer(this.layerGroup)) {
@@ -376,8 +368,10 @@ export class AppComponent{
       })
       this.layerGroup.addLayer(leafletMarker);
       this.markerClusterGroup.addLayer(leafletMarker)
+      clusterData.push(leafletMarker)
     })
 
+    this.markerClusterData = clusterData;
     // this.map.addLayer(this.layerGroup)
     this.map.addLayer(this.markerClusterGroup)
 
@@ -487,6 +481,30 @@ export class AppComponent{
 
     let layerControl = L.control.layers(baseMaps).addTo(this.map);
     this.aroundMeButton()
+
+    this.markerClusterGroup = new MarkerClusterGroup(this.markerClusterOptions);
+
+    const getEvents = this.dataService.getEvents();
+    const getTrails = this.dataService.getTrails();
+    const getObservations = this.dataService.getObservations(19000);
+
+    //Chargement des données
+    forkJoin([getEvents, getTrails, getObservations]).subscribe((data: any) => {
+      this.fillEvents(data[0])
+      this.fillTrails(data[1])
+      this.fillObservations(data[2].images)
+
+      this.sources
+        .map(source => {
+          if (source.name === this.sourceName) {
+            this.dataToDisplay = source.data
+          }
+        })
+
+      this.isLoading = false;
+
+      this.loadMarkers()
+    })
   }
 
   setAroundMeButton(button: any, doLocate = true, aroundMeDiv: any = null){

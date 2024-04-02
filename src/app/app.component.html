@@ -1,8 +1,7 @@
 <div id="map" leaflet
      [leafletOptions]="options"
      (leafletMapReady)="mapReady($event)"
-(leafletClick)="mapClicked($event)"
-     [leafletMarkerCluster]="markerClusterData">
+     (leafletClick)="mapClicked($event)">
 
     @if(isLoading){
   <div id="loading-zone">
