@@ -30,7 +30,7 @@ You will need to copy the content of the `dist/tbmaps-angular/browser` on your s
 ## Usage
 
 **You can use some parameters to customize the map** :
-- `sources` : the main source to display (`evenements` by default, the other options option are `sentiers` and `observations`)
+- `sources` : the main source to display (`evenements` by default, the other options are `sentiers` and `observations`)
 - `logo` : an image url for your logo to be displayed on bottom left of the map
 - `titre` : a title for your map
 - `url_site` : the link of your logo to your website
