@@ -40,6 +40,15 @@ To add some more custom parameters you will have to extend the app see **Extend*
 
 ## Extend
 
+**List of parameters you can use to filter observations** :
+
+- `referentiel` : filter by taxon referentiel
+- `projet` : filter by project
+- `taxon` : filter by taxon selected name
+- `num_nom` : filter by taxon id number
+- `auteur` : filter by user (id or user e-mail)
+- `standard` : `0` for non_standard data (`1` by default if parameter is missing)
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).

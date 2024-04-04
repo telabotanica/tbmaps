@@ -25,7 +25,14 @@ export class DataService {
     return this.http.get<any[]>(url);
   }
 
-  getObservations(limite: number){
-      return this.http.get<any[]>(this.celUrlImages + '?limit=' + limite);
+  getObservations(limite: number, params: any[] = []){
+    let queryString = '';
+    if (params.length > 0) {
+      queryString = params.map(param => `${encodeURIComponent(param.name)}=${encodeURIComponent(param.value)}`).join('&');
+    }
+
+    // Ajouter le paramètre 'limit' à la chaîne de requête
+    queryString += (queryString ? '&' : '') + `limit=${limite}`;
+      return this.http.get<any[]>(this.celUrlImages + '?' + queryString);
   }
 }

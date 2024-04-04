@@ -19,7 +19,7 @@ import {FormsModule} from "@angular/forms";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FilterComponent} from "./forms/filter/filter.component";
 import {Source} from "./models/Source";
-import {forkJoin} from "rxjs";
+import {forkJoin, Observable} from "rxjs";
 import {Trail} from "./models/Trail";
 import {TrailPopupComponent} from "./components/popups/trail-popup/trail-popup.component";
 import {Title} from "@angular/platform-browser";
@@ -86,8 +86,17 @@ export class AppComponent{
   positionBeforeLocateMe: any = null;
   dataToDisplay: any;
 
-  logo!: any
-  url_site!: any
+  // Url parameters
+  logo!: any;
+  url_site!: any;
+  referentiel!: string;
+  annee!: string;
+  projet!: string;
+  taxon!: string;
+  numNomRet!: string;
+  auteur!: string;
+  standard!: string;
+  params: any[] = []
 
   error!: string;
 
@@ -159,6 +168,33 @@ export class AppComponent{
         case 'url_site':
           this.url_site = param.value
           break;
+        case 'referentiel':
+          this.referentiel = param.value
+          this.params.push(param)
+          break;
+        case 'annee':
+          this.annee = param.value
+          break;
+        case 'projet':
+          this.projet = param.value
+          this.params.push(param)
+          break;
+        case 'taxon': //nom
+          this.taxon = param.value
+          this.params.push(param)
+          break;
+        case 'num_nom': //num_nom
+          this.numNomRet = param.value
+          this.params.push(param)
+          break;
+        case 'auteur':
+          this.auteur = param.value
+          this.params.push(param)
+          break;
+        case 'standard':
+          this.standard = param.value
+          this.params.push(param)
+          break;
         default:
           break;
       }
@@ -185,6 +221,80 @@ export class AppComponent{
     }
 
     this.sourceDisplay = 'évènements'
+  }
+
+  mapReady(e: L.Map) {
+    this.map = e;
+
+    let baseMaps = {
+      "Plan": this.osmLayer,
+      "Satellite": this.satelliteLayer
+    };
+
+    let layerControl = L.control.layers(baseMaps).addTo(this.map);
+    this.aroundMeButton()
+
+    this.markerClusterGroup = new MarkerClusterGroup(this.markerClusterOptions);
+
+    const getEvents = this.dataService.getEvents();
+    const getTrails = this.dataService.getTrails();
+    const getObservations = this.dataService.getObservations(19000, this.params);
+
+    //Chargement des données
+    forkJoin([getEvents, getTrails, getObservations]).subscribe((data: any) => {
+      this.fillEvents(data[0])
+      this.fillTrails(data[1])
+
+      let obs = data[2].images
+      let obsTotal = data[2].total;
+      let start = 19000;
+      let obsLimit = 75000
+
+      const loadAdditionalObservationsRecursive = (total: number, start: number, obs: any[]) => {
+        // Pour charger + d'obs que 19000 et jusqu'a la limite obsLimit
+        if (obs.length < obsTotal && obs.length < obsLimit) {
+          this.loadAdditionalObservations(total, start).subscribe((additionalData: any) => {
+            obs = obs.concat(additionalData.images);
+            start += 19000;
+            loadAdditionalObservationsRecursive(total, start, obs);
+          });
+        } else {
+          // Toutes les observations ont été chargées, remplir les données, etc.
+          this.loadData(obs)
+        }
+      };
+
+      // Si on a le paramètre observations on va démarrer le chargement récursif
+      // des observations supplémentaires afin d'afficher + d'obs
+      if (this.sourceName == 'observations'){
+        loadAdditionalObservationsRecursive(obsTotal, start, obs);
+      } else {
+        this.loadData(obs)
+      }
+    })
+  }
+
+  // Fonction pour charger des observations supplémentaires
+  loadAdditionalObservations(total: number, start: number): Observable<any> {
+    if (start < 38000){
+      this.params.push({ name: 'start', value: start });
+    } else {
+      let startIndex = this.params.findIndex((e) => e.name == 'start')
+      this.params[startIndex].value = start
+    }
+
+    return this.dataService.getObservations(19000, this.params)
+  }
+
+  loadData(obs: any[]){
+    this.fillObservations(obs);
+    this.sources.forEach(source => {
+      if (source.name === this.sourceName) {
+        this.dataToDisplay = source.data;
+      }
+    });
+    this.isLoading = false;
+    this.loadMarkers();
   }
 
   fillEvents(data:any){
@@ -274,18 +384,24 @@ export class AppComponent{
       const idObs = image.obs.id_obs;
       const cleanUrl = image.url_photo.split(',')[0];
       const existingEntry = acc.find((entry: any) => entry.id === idObs);
+
+      // On transforme la liste des tags en array
+      let cleanTags = image.tags_photo ? image.tags_photo.split(/\s*,\s*/).filter(Boolean) : null;
+
       if (existingEntry) {
-        existingEntry.images.push({ ...image, url_photo: cleanUrl });
+        existingEntry.images.push({ ...image, url_photo: cleanUrl, tags_photo: cleanTags });
       } else {
         acc.push({
           id: idObs,
-          images: [{ ...image, url_photo: cleanUrl }]
+          images: [{ ...image, url_photo: cleanUrl, tags_photo: cleanTags }]
         });
       }
       return acc;
     }, []);
 
     this.observations = observationsGrouped.map((observation: any) => {
+      let fiabilite = Number(observation.images[0].obs.fiabilite) // données standard si >= 3
+
       return new Obs(
         observation.id,
         observation.images[0].obs.nom_referentiel,
@@ -305,7 +421,9 @@ export class AppComponent{
         observation.images[0].utilisateur,
         'assets/images/marker-icon-jaune.svg',
         'observations',
-        'observations'
+        'observations',
+        observation.images[0].obs.projet,
+        fiabilite
       );
     });
 
@@ -471,41 +589,7 @@ export class AppComponent{
     this.sourceName = e
   }
 
-  mapReady(e: L.Map) {
-    this.map = e;
 
-    let baseMaps = {
-      "Plan": this.osmLayer,
-      "Satellite": this.satelliteLayer
-    };
-
-    let layerControl = L.control.layers(baseMaps).addTo(this.map);
-    this.aroundMeButton()
-
-    this.markerClusterGroup = new MarkerClusterGroup(this.markerClusterOptions);
-
-    const getEvents = this.dataService.getEvents();
-    const getTrails = this.dataService.getTrails();
-    const getObservations = this.dataService.getObservations(19000);
-
-    //Chargement des données
-    forkJoin([getEvents, getTrails, getObservations]).subscribe((data: any) => {
-      this.fillEvents(data[0])
-      this.fillTrails(data[1])
-      this.fillObservations(data[2].images)
-
-      this.sources
-        .map(source => {
-          if (source.name === this.sourceName) {
-            this.dataToDisplay = source.data
-          }
-        })
-
-      this.isLoading = false;
-
-      this.loadMarkers()
-    })
-  }
 
   setAroundMeButton(button: any, doLocate = true, aroundMeDiv: any = null){
     if(doLocate) {

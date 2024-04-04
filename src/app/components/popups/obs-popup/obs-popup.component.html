@@ -2,7 +2,7 @@
   <div id="popup" class="popup-trail">
     <div id="events" style="overflow:auto;">
       <button id="close-popup" (click)="close()">x</button>
-      @if(data.referentiel != 'Autre/inconnu' || data.referentiel != 'taxref'){
+      @if(data.referentiel != 'Autre/inconnu' && data.referentiel != 'taxref'){
         <a class="events-category-label" href="https://www.tela-botanica.org/eflore?referentiel={{data.referentiel}}"
            rel="category" title="{{data.referentiel}}" target="_blank">
         {{data.referentiel}}</a>

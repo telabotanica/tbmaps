@@ -18,9 +18,10 @@ export class Obs {
   private _icon: any;
   private _markerType: any;
   private _source: any;
+  private _projet: string;
+  private _fiabilite: number;
 
-
-  constructor(id: string, referentiel: string, nomRet: string, nomRetNn: string, nomSel: string, nomSelNn: string, famille: string, author: string, dateObs: any,  commentaire: string, typeDonnees: string, milieu: string, urlIp: string, coord: any, image: any, utilisateur: any, icon: any, markerType: any, source: any) {
+  constructor(id: string, referentiel: string, nomRet: string, nomRetNn: string, nomSel: string, nomSelNn: string, famille: string, author: string, dateObs: any,  commentaire: string, typeDonnees: string, milieu: string, urlIp: string, coord: any, image: any, utilisateur: any, icon: any, markerType: any, source: any, projet: string, fiabilite: number) {
     this._id = id;
     this._referentiel = referentiel;
     this._nomRet = nomRet;
@@ -40,6 +41,8 @@ export class Obs {
     this._icon = icon;
     this._markerType = markerType;
     this._source = source;
+    this._projet = projet;
+    this._fiabilite = fiabilite;
   }
 
 
@@ -193,5 +196,23 @@ export class Obs {
 
   set source(value: any) {
     this._source = value;
+  }
+
+
+  get projet(): string {
+    return this._projet;
+  }
+
+  set projet(value: string) {
+    this._projet = value;
+  }
+
+
+  get fiabilite(): number {
+    return this._fiabilite;
+  }
+
+  set fiabilite(value: number) {
+    this._fiabilite = value;
   }
 }

@@ -67,18 +67,6 @@ export class CommonService {
 
   capitalizeFirstLetter = (string: any) => (this.isString(string, true)) ? string[0].toUpperCase()+string.slice(1) : string;
 
-  /*
-  dynamicCallClass(dataAttrClassName: any){
-    let nameParts = dataAttrClassName.split('-');
-
-    nameParts = nameParts.map(this.capitalizeFirstLetter);
-
-    const className = nameParts.join('');
-
-    return this.sourceClasses[className];
-  };
-   */
-
   parsePlace(placeData: any){
     return( !!placeData && 'object' === typeof placeData ) ? placeData : this.tryParseJson(placeData);
   };
@@ -142,7 +130,20 @@ export class CommonService {
   };
 
   readUrlParameters(): { name: string, value: string }[] {
-    const expectedParams = ['title', 'logo', 'sources', 'zoom', 'url_site'];
+    const expectedParams = [
+      'title',
+      'logo',
+      'sources',
+      'zoom',
+      'url_site',
+      'referentiel',
+      'annee',
+      'projet',
+      'taxon',
+      'num_nom',
+      'auteur',
+      'standard'
+    ];
     const urlParams: { name: string, value: string }[] = [];
 
     const queryString = decodeURIComponent(window.location.search.substring(1));
