@@ -2,11 +2,16 @@
   <div id="popup" class="popup-trail">
     <div id="events" style="overflow:auto;">
       <button id="close-popup" (click)="close()">x</button>
-      <a class="events-category-label" href="https://www.tela-botanica.org/eflore?referentiel={{data.referentiel}}"
-         rel="category" title="{{data.referentiel}}" target="_blank">
+      @if(data.referentiel != 'Autre/inconnu' || data.referentiel != 'taxref'){
+        <a class="events-category-label" href="https://www.tela-botanica.org/eflore?referentiel={{data.referentiel}}"
+           rel="category" title="{{data.referentiel}}" target="_blank">
         {{data.referentiel}}</a>
-      <h2 id="events-title"><a href="https://www.tela-botanica.org/{{data.referentiel}}-nn-{{data.nomRetNn}}"
-                               target="_blank" [innerHTML]="data.nomSel"></a></h2>
+        <h2 id="events-title"><a href="https://www.tela-botanica.org/{{data.referentiel}}-nn-{{data.nomRetNn}}" title="{{data.nomSel}}" target="_blank" [innerHTML]="data.nomSel"></a></h2>
+      } @else {
+        <a class="events-category-label" title="{{data.referentiel}}">
+        {{data.referentiel}}</a>
+        <h2 id="events-title"><a title="{{data.nomSel}}" [innerHTML]="data.nomSel"></a></h2>
+      }
       <p>Famille: <i>{{data.famille}}</i></p>
     </div>
 
