@@ -140,7 +140,7 @@ export class CommonService {
       'annee',
       'projet',
       'taxon',
-      'num_nom',
+      'num_nom_ret',
       'auteur',
       'standard'
     ];

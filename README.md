@@ -33,7 +33,7 @@ You will need to copy the content of the `dist/tbmaps-angular/browser` on your s
 - `sources` : the main source to display (`evenements` by default, the other options are `sentiers` and `observations`)
 - `logo` : an image url for your logo to be displayed on bottom left of the map
 - `titre` : a title for your map
-- `url_site` : the link of your logo to your website
+- `url_site` : the link on your logo to your website
 - `zoom` : an integer between 2 and 18  (the default zoom is `7`)
 
 To add some more custom parameters you will have to extend the app see **Extend** section below.
@@ -45,7 +45,7 @@ To add some more custom parameters you will have to extend the app see **Extend*
 - `referentiel` : filter by taxon referentiel
 - `projet` : filter by project
 - `taxon` : filter by taxon selected name
-- `num_nom` : filter by taxon id number
+- `num_nom_ret` : filter by taxon id number
 - `auteur` : filter by user (id or user e-mail)
 - `standard` : `0` for non_standard data (`1` by default if parameter is missing)
 

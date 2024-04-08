@@ -148,6 +148,7 @@ export class AppComponent{
     this.displayedZoom = this.defaultZoom;
     this.logo = 'https://resources.tela-botanica.org/tb/img/128x128/logo_carre_officiel.png';
     this.url_site = 'https://www.tela-botanica.org';
+    this.sourceDisplay = 'évènements'
 
     // URL parameters
     let urlParams = this.commonService.readUrlParameters()
@@ -168,23 +169,26 @@ export class AppComponent{
         case 'url_site':
           this.url_site = param.value
           break;
-        case 'referentiel':
+        case 'referentiel': //widget ne marche pas -> renvoie 0 results
           this.referentiel = param.value
-          this.params.push(param)
+          this.sourceName = 'observations'
           break;
         case 'annee':
           this.annee = param.value
           break;
-        case 'projet':
+        case 'projet':// widget ne marche pas -> renvoie tout
           this.projet = param.value
+          this.sourceName = 'observations'
           this.params.push(param)
           break;
-        case 'taxon': //nom
+        case 'taxon':
           this.taxon = param.value
+          this.sourceName = 'observations'
           this.params.push(param)
           break;
-        case 'num_nom': //num_nom
+        case 'num_nom_ret': //widget ne marche pas -> renvoie tout
           this.numNomRet = param.value
+          this.sourceName = 'observations'
           this.params.push(param)
           break;
         case 'auteur':
@@ -193,6 +197,7 @@ export class AppComponent{
           break;
         case 'standard':
           this.standard = param.value
+          this.sourceName = 'observations'
           this.params.push(param)
           break;
         default:
@@ -220,7 +225,6 @@ export class AppComponent{
       }
     }
 
-    this.sourceDisplay = 'évènements'
   }
 
   mapReady(e: L.Map) {
@@ -248,7 +252,7 @@ export class AppComponent{
       let obs = data[2].images
       let obsTotal = data[2].total;
       let start = 19000;
-      let obsLimit = 75000
+      let obsLimit = 100000
 
       const loadAdditionalObservationsRecursive = (total: number, start: number, obs: any[]) => {
         // Pour charger + d'obs que 19000 et jusqu'a la limite obsLimit
@@ -266,7 +270,7 @@ export class AppComponent{
 
       // Si on a le paramètre observations on va démarrer le chargement récursif
       // des observations supplémentaires afin d'afficher + d'obs
-      if (this.sourceName == 'observations'){
+      if (this.sourceName == 'observations' || this.numNomRet || this.referentiel || this.projet){
         loadAdditionalObservationsRecursive(obsTotal, start, obs);
       } else {
         this.loadData(obs)
@@ -287,6 +291,19 @@ export class AppComponent{
   }
 
   loadData(obs: any[]){
+    // On filtre les résultats pour les paramètres qui ne maarchent pas -> TODO a supprimer une fois le widget corrigé ou l'appel à un meilleur widget
+    if (this.referentiel){
+      obs = obs.filter(entry => entry.obs && entry.obs.nom_referentiel === this.referentiel);
+    }
+
+    if (this.numNomRet){
+      obs = obs.filter(entry => entry.obs && entry.obs.nom_ret_nn === this.numNomRet);
+    }
+
+    if (this.projet){
+      obs = obs.filter(entry => entry.obs && entry.obs.projet === this.projet);
+    }
+
     this.fillObservations(obs);
     this.sources.forEach(source => {
       if (source.name === this.sourceName) {
