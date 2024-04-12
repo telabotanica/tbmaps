@@ -1,7 +1,8 @@
 import {
-  Component,inject,
-  Inject, NgZone,
-  Renderer2
+  ApplicationRef,
+  Component, ComponentFactoryResolver, ComponentRef, ElementRef, inject,
+  Inject, Injector, NgZone,
+  Renderer2, ViewChild, ViewContainerRef
 } from '@angular/core';
 import {CommonModule, DOCUMENT, NgComponentOutlet} from '@angular/common';
 import {RouterOutlet} from '@angular/router';
@@ -16,7 +17,7 @@ import {environment} from "../environments/environment";
 import {NgxLeafletFullscreenModule} from "@runette/ngx-leaflet-fullscreen";
 import {EventPopupComponent} from "./components/popups/event-popup/event-popup.component";
 import {FormsModule} from "@angular/forms";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+// import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FilterComponent} from "./forms/filter/filter.component";
 import {Source} from "./models/Source";
 import {forkJoin, Observable} from "rxjs";
@@ -35,13 +36,14 @@ import {ObsPopupComponent} from "./components/popups/obs-popup/obs-popup.compone
     RouterOutlet,
     LeafletModule,
     NgxLeafletFullscreenModule,
-    EventPopupComponent,
     FormsModule,
     EventPopupComponent,
     NgComponentOutlet,
     FilterComponent,
     CommonModule,
-    LeafletMarkerClusterModule
+    LeafletMarkerClusterModule,
+    TrailPopupComponent,
+    ObsPopupComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
@@ -105,13 +107,14 @@ export class AppComponent{
   observations:any[] = [];
   eventsCategories: any;
 
-  mapDiv!: HTMLElement;
-  popupDiv!: HTMLElement;
-  closePopupDiv!: HTMLElement;
+  popupIsDisplayed = false;
+  popupData!: any;
+  popupOccurrences:any[] = [];
+  // @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
 
   private commonService = inject(CommonService)
   private dataService = inject(DataService)
-  public dialog = inject(MatDialog);
+  // public dialog = inject(MatDialog);
   private renderer = inject(Renderer2);
   private zone = inject(NgZone)
   private titleService = inject(Title)
@@ -448,10 +451,6 @@ export class AppComponent{
     this.sources.push(newSource)
   }
 
-  ngAfterViewInit() {
-    this.mapDiv = document.getElementById('filters-zone') as HTMLElement
-  }
-
   generateLayerOptions(layer: string){
     return {
       attribution: this.layerAttributions[layer],
@@ -551,19 +550,15 @@ export class AppComponent{
 
   }
 
-  displayPopup(e:any, markerData: any){
-    // Ajout popup avec angular material
-    this.zone.run(()=>{ // A utiliser pour charger les datas on init sinon ça load pas les infos dans le template, je sais pas pourquoi
-      if (this.sourceName == 'evenements' || this.sourceName == '26' || this.sourceName == '27' || this.sourceName == '28' || this.sourceName == '29'){
-        this.dialog.open(EventPopupComponent, {
-          data: {
-            data: markerData
-          }
-        })
-          .afterClosed()
-      } else if (this.sourceName == 'sentiers'){
-        let occurrences:any[] = [];
+  closePopup() {
+    this.popupIsDisplayed = false;
+    this.map.scrollWheelZoom.enable();
+  }
 
+  displayPopup(e:any, markerData: any){
+    this.zone.run(()=>{
+      if (this.sourceName == 'sentiers'){
+        this.popupOccurrences = []
         this.dataService.getTrailDetails(markerData.details).subscribe((trailDetails: any) => {
           trailDetails.occurrences.forEach((occurrence: any) => {
 
@@ -576,23 +571,17 @@ export class AppComponent{
               "images": occurrence.images
             }
 
-            occurrences.push(taxon)
+            this.popupOccurrences.push(taxon)
+            this.popupIsDisplayed = true;
+            this.popupData = markerData;
+            this.map.scrollWheelZoom.disable();
           })
-          this.dialog.open(TrailPopupComponent, {
-            data: {
-              data: markerData,
-              occurrences: occurrences
-            }
-          })
-            .afterClosed()
         })
-      } else if (this.sourceName == 'observations') {
-        this.dialog.open(ObsPopupComponent, {
-          data: {
-            data: markerData
-          }
-        })
-          .afterClosed()
+
+      } else {
+        this.popupIsDisplayed = true;
+        this.popupData = markerData;
+        this.map.scrollWheelZoom.disable();
       }
     })
   }
@@ -605,8 +594,6 @@ export class AppComponent{
   updateSourceName(e: any){
     this.sourceName = e
   }
-
-
 
   setAroundMeButton(button: any, doLocate = true, aroundMeDiv: any = null){
     if(doLocate) {
@@ -694,15 +681,7 @@ export class AppComponent{
   }
 
   mapClicked($event: any) {
-    // console.log($event.latlng.lat, $event.latlng.lng);
+    console.log($event.latlng.lat, $event.latlng.lng);
   }
-  //
-  // markerClicked($event: any, index: number) {
-  //   console.log($event.latlng.lat, $event.latlng.lng);
-  // }
-  //
-  // markerDragEnd($event: any, index: number) {
-  //   console.log($event.target.getLatLng());
-  // }
 
 }

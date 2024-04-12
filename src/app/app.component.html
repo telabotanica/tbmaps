@@ -27,6 +27,16 @@
   </div>
   <div id="tooltip" style="display:none;"></div>
 
+  @if(popupIsDisplayed && popupData){
+    @if(sourceName == 'sentiers'){
+      <app-trail-popup [data]="popupData" [occurrences]="popupOccurrences" (closePopupEmitter)="closePopup()"/>
+    } @else if (sourceName == 'observations'){
+      <app-obs-popup [data]="popupData" (closePopupEmitter)="closePopup()"/>
+    } @else {
+      <app-event-popup [data]="popupData" (closePopupEmitter)="closePopup()"/>
+    }
+  }
+
 </div>
 
 <router-outlet></router-outlet>

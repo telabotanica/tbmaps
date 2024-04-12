@@ -1,10 +1,9 @@
-import {Component, inject, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Component, EventEmitter, inject, Inject, Input, Output} from '@angular/core';
 import {CommonService} from "../../../services/common.service";
 import {CommonModule} from "@angular/common";
 import {environment} from "../../../../environments/environment";
-import {Util} from "leaflet";
-import trim = Util.trim;
+// import {Util} from "leaflet";
+// import trim = Util.trim;
 
 @Component({
   selector: 'app-obs-popup',
@@ -18,18 +17,26 @@ import trim = Util.trim;
 export class ObsPopupComponent {
 
   formattedDate: any;
-  displayedName: string;
+  displayedName!: string;
   profilLink: string = '';
+  @Input() data!: any
+  @Output() closePopupEmitter = new EventEmitter<void>()
 
   memberLink = environment.membersProfil;
 
   private commonService = inject(CommonService)
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
-              public dialogRef: MatDialogRef<ObsPopupComponent>) {
-    this.data = data.data
+  constructor() {}
 
-    // Formatage de la date
+  public ngOnInit() {
+    this.transformData()
+  }
+
+  close() {
+    this.closePopupEmitter.emit();
+  }
+
+  private transformData(){
     let formatDates = this.data.dateObs ? this.commonService.formatDates(this.data.dateObs) : null
     let localDate = formatDates ? formatDates.localDateString : null
     this.formattedDate = localDate ? localDate : null;
@@ -37,7 +44,7 @@ export class ObsPopupComponent {
     // Formatage du nom de l'auteur
     if (this.data.author) {
       this.displayedName = this.data.author
-    } else if (trim(this.data.utilisateur.nom_utilisateur)){
+    } else if ((this.data.utilisateur.nom_utilisateur).trim()){
       this.displayedName = this.data.utilisateur.nom_utilisateur
     } else if(this.data.utilisateur.email){
       this.displayedName = this.commonService.tronquerEmail(this.data.utilisateur.email)
@@ -48,9 +55,5 @@ export class ObsPopupComponent {
     if (this.data.utilisateur.nom_utilisateur) {
       this.profilLink = this.memberLink + this.commonService.formatUsername(this.data.utilisateur.nom_utilisateur);
     }
-  }
-
-  close() {
-    this.dialogRef.close();
   }
 }

@@ -1,5 +1,4 @@
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
   selector: 'app-trail-popup',
@@ -9,12 +8,15 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
   styleUrl: './trail-popup.component.css'
 })
 export class TrailPopupComponent {
-  occurrences: any[]
+  @Input() occurrences!: any[]
+  @Input() data!: any
+  @Output() closePopupEmitter = new EventEmitter<void>()
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
-              public dialogRef: MatDialogRef<TrailPopupComponent>) {
-    this.data = data.data
-    this.occurrences = this.filterDuplicates(data.occurrences, 'name_id');
+  constructor() {
+  }
+
+  public ngOnInit() {
+    this.occurrences = this.filterDuplicates(this.occurrences, 'name_id');
   }
 
   filterDuplicates(array: any[], key: string): any[] {
@@ -30,6 +32,6 @@ export class TrailPopupComponent {
   }
 
   close() {
-    this.dialogRef.close();
+    this.closePopupEmitter.emit();
   }
 }
