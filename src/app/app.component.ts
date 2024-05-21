@@ -113,6 +113,8 @@ export class AppComponent{
   popupOccurrences:any[] = [];
   // @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
 
+  userLoggedIn = false;
+  userInfos : any;
   userName = '';
   userEmail = '';
   userId = '';
@@ -235,9 +237,14 @@ export class AppComponent{
     }
 
     // Décodage du cookie d'auth
-    this.userName = this.cookiesService.userInfos()['intitule'];
-    this.userEmail = this.cookiesService.userInfos()['sub'];
-    this.userId = this.cookiesService.userInfos()['id'];
+    this.userLoggedIn = this.cookiesService.checkUserLoggedIn();
+
+    if (this.userLoggedIn){
+      this.userInfos = this.cookiesService.userInfos()
+      this.userName = this.userInfos['intitule'];
+      this.userEmail = this.userInfos['sub'];
+      this.userId = this.userInfos['id'];
+    }
   }
 
   mapReady(e: L.Map) {
@@ -404,7 +411,7 @@ export class AppComponent{
     })
 
     // Afficher seulement des sentiers validés de l'utilisateur
-    if (this.userName && (this.auteur == this.userId || this.auteur == this.userEmail)){
+    if (this.userName && (this.auteur == this.userId || this.auteur == this.userEmail || this.auteur == this.userName)){
       this.trails = this.trails.filter(trail => trail.author === this.userName);
     }
 

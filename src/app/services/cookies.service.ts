@@ -11,10 +11,14 @@ export class CookiesService {
 
   constructor(private cookieService: CookieService) { }
 
-  userInfos(){
-    let token = this.cookieService.get('tb_auth');
+  checkUserLoggedIn(){
+    let token = this.cookieService.get(this.cookieName);
+    return !!token;
+  }
 
-    return this.decodeToken(token);
+  userInfos(){
+    let token = this.cookieService.get(this.cookieName);
+    return token ? this.decodeToken(token) : null;
   }
 
   decodeToken(token: string): any {
