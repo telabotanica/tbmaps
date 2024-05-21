@@ -27,6 +27,7 @@ import {Title} from "@angular/platform-browser";
 import {LeafletMarkerClusterModule} from "@asymmetrik/ngx-leaflet-markercluster";
 import {Obs} from "./models/Obs";
 import {ObsPopupComponent} from "./components/popups/obs-popup/obs-popup.component";
+import {CookiesService} from "./services/cookies.service";
 
 @Component({
   selector: 'app-root',
@@ -112,12 +113,17 @@ export class AppComponent{
   popupOccurrences:any[] = [];
   // @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
 
+  userName = '';
+  userEmail = '';
+  userId = '';
+
   private commonService = inject(CommonService)
   private dataService = inject(DataService)
   // public dialog = inject(MatDialog);
   private renderer = inject(Renderer2);
   private zone = inject(NgZone)
   private titleService = inject(Title)
+  private cookiesService = inject(CookiesService)
 
   constructor(@Inject(DOCUMENT) document: Document) {
     this.eventsCategories = [
@@ -228,6 +234,10 @@ export class AppComponent{
       }
     }
 
+    // Décodage du cookie d'auth
+    this.userName = this.cookiesService.userInfos()['intitule'];
+    this.userEmail = this.cookiesService.userInfos()['sub'];
+    this.userId = this.cookiesService.userInfos()['id'];
   }
 
   mapReady(e: L.Map) {
@@ -392,6 +402,11 @@ export class AppComponent{
 
       this.trails.push(trailPostData)
     })
+
+    // Afficher seulement des sentiers validés de l'utilisateur
+    if (this.userName && (this.auteur == this.userId || this.auteur == this.userEmail)){
+      this.trails = this.trails.filter(trail => trail.author === this.userName);
+    }
 
     let newSource = new Source('sentiers', 'sentiers', this.trails,  this.trails.length, 'assets/images/marker-icon-kaki.svg');
     this.sources.push(newSource)

@@ -9,7 +9,8 @@ export const environment = {
   baseURLServicesCelTpl: 'https://api.tela-botanica.org/service:cel:CelWidgetMapPoint/stations',
   celUrlImages: 'https://api.tela-botanica.org/service:cel:CelWidgetImage/*',
   delUrlObs: 'https://api.tela-botanica.org/service:del:0.1/observations',
-  membersProfil: 'https://www.tela-botanica.org/membres/'
+  membersProfil: 'https://www.tela-botanica.org/membres/',
+  cookieName: 'tb_auth'
   // celUrlExport: 'https://api.tela-botanica.org/service:cel:CelWidgetExport/'
 };
 
