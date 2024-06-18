@@ -1,0 +1,42 @@
+<div id="map" leaflet
+     [leafletOptions]="options"
+     (leafletMapReady)="mapReady($event)"
+     (leafletClick)="mapClicked($event)">
+
+    @if(isLoading){
+  <div id="loading-zone">
+    <div id="loading-{{sourceDisplay}}">
+      <img src="assets/images/loading.gif" alt="Chargement en cours..." style="width:10%;">
+			<p>Chargement des données en cours...</p>
+    </div>
+  </div>
+    }
+
+  <div id="logo">
+    <a href="{{url_site}}" title="{{url_site}}" target="_blank">
+      <img height="60px" id="image-logo" src="{{logo}}" alt="logo">
+    </a>
+  </div>
+  <div id="title-zone" class="element-overlay hidden">
+    <h1 id="map-title"><span id="map-title-infos"></span></h1>
+  </div>
+  <div id="filters-zone">
+    @if(sources && dataToDisplay){
+      <app-filter [sources]="sources" [categories]="eventsCategories" [dataToDisplay]="dataToDisplay" (dataToDisplayChange)="updateDataToDisplay($event)" (sourceNameChange)="updateSourceName($event)" [sourceName]="sourceName"/>
+    }
+  </div>
+  <div id="tooltip" style="display:none;"></div>
+
+  @if(popupIsDisplayed && popupData){
+    @if(sourceName == 'sentiers'){
+      <app-trail-popup [data]="popupData" [occurrences]="popupOccurrences" (closePopupEmitter)="closePopup()"/>
+    } @else if (sourceName == 'observations'){
+      <app-obs-popup [data]="popupData" (closePopupEmitter)="closePopup()"/>
+    } @else {
+      <app-event-popup [data]="popupData" (closePopupEmitter)="closePopup()"/>
+    }
+  }
+
+</div>
+
+<router-outlet></router-outlet>

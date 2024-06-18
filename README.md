@@ -9,30 +9,59 @@ Designed for integration in an iframe.
 
 ## Install
 
-Copy & paste [_assets/scripts/config.default.js_](assets/scripts/config.default.js) as _config.js_, then change the `baseUrlSite`.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.
+
+- `npm i`
+
+# Development server
+
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
+## Code scaffolding
+
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+
+## Build
+
+Run `ng build --configuration production --base-href=/tbmaps/` to build the project on production server. The build artifacts will be stored in the `dist/` directory.
+
+You will need to copy the content of the `dist/tbmaps-angular/browser` on your server
 
 ## Usage
 
 **You can use some parameters to customize the map** :
-- `sources` : a coma separated list of sources for the map
+- `sources` : the main source to display (`evenements` by default, the other options are `sentiers` and `observations`)
 - `logo` : an image url for your logo to be displayed on bottom left of the map
-- `title` : a title for your map
-- `website_url` : the link of your logo to your website
-- `zoom` : an integer between 4 and 18  
+- `titre` : a title for your map
+- `url_site` : the link on your logo to your website
+- `zoom` : an integer between 2 and 18  (the default zoom is `7`)
 
 To add some more custom parameters you will have to extend the app see **Extend** section below.
 
 ## Extend
 
-### If you added some sources, you will have to:
-- Implement your own [Source] js handler classe for each  
-I recommend to copy the _evenements.js_ code and adapt, **you have to implement all methods and variables in "_required implementation_" part (see comments), and call the file like the class name (lower case)**.
-- Maybe adapt the code in tb-maps.js if necessary
-- Add some css in [_asset/css/[your source].css_](assets/css/)
+**List of parameters you can use to filter observations** :
 
-* _If you expect iframe integration of the app, remember that links in `<a>` tags will open inside the iframe, unless you add them `target=""` attribute with `_blank` or `_parent` or `_top` value._
+- `referentiel` : filter by taxon referentiel
+- `projet` : filter by project
+- `taxon` : filter by taxon selected name
+- `num_nom_ret` : filter by taxon id number
+- `auteur` : filter by user (id or user e-mail)
+- `standard` : `0` for non_standard data (`1` by default if parameter is missing)
 
-## Default source
+## Running unit tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+
+## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+## Default source for events
 
 Default source is Tela-botanica (geolocated) post events called ***evenements*** (Évènements): 
 * Page :  [https://www.tela-botanica.org/evenements/](https://www.tela-botanica.org/evenements/).

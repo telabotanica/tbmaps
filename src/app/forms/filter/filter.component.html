@@ -1,0 +1,33 @@
+<form class="filters-form">
+  <div class="wrapper-filter">
+    <h4>Filtrer les données</h4>
+
+    @for (source of sources; track source.name) {
+
+    <ng-container *ngIf="source.name === 'evenements'; else otherSource">
+      <label class="source-filter" [for]="'filter-' + source.name">
+        <input type="radio" id="filter-{{source.name}}" class="input-filters filter-{{source.name}}-all" name="dataFilter" data-category="all" [value]="source.name" (change)="handleChange($event)" [checked]="sourceName === 'evenements'">
+          <span class="source-filter-label" data-category="all"> Tous les {{source.displayName}} ({{source.entries}})</span>
+        </label>
+
+        @for (category of categories; track category.id){
+        <label for="category-{{category.id}}" class="category-filter" style="background-image: url('{{category.icon}}')">
+             <input type="radio" id="category-{{category.id}}" class="input-filters" name="dataFilter" value="{{category.id}}" (change)="handleChange($event)">
+             <span class="source-filter-label"> {{category.title}} ({{category.dataLength}})</span>
+            </label>
+        }
+    </ng-container>
+
+    <ng-template #otherSource>
+    <hr class="hr" />
+        <label class="source-filter" [for]="'filter-' + source.name" style="background-image: url('{{source.icon}}')">
+          <input type="radio" id="filter-{{source.name}}" class="input-filters filter-{{source.name}}-all" name="dataFilter"
+             data-category="all" [value]="source.name" (change)="handleChange($event)" [checked]="sourceName === source.name">
+          <span class="source-filter-label" data-category="all"> Les
+          @if(source.name == 'observations'){dernières }
+          {{source.displayName}} ({{source.entries}})</span>
+    </label>
+  </ng-template>
+    }
+  </div>
+</form>
