@@ -136,13 +136,18 @@ export class CommonService {
       'sources',
       'zoom',
       'url_site',
-      'referentiel',
+      'referentiel', //masque.referentiel
       'annee',
-      'projet',
-      'taxon',
-      'num_nom_ret',
-      'auteur',
-      'standard'
+      'projet', //masque.projet
+      'taxon', //masque.nom_ret
+      'num_nom_ret', //masque.nom_ret_nn
+      'auteur', //masque.auteur
+      'standard',
+      'navigation.depart',
+      'navigation.limite',
+      'masque',
+      'famille',
+      'annee'
     ];
     const urlParams: { name: string, value: string }[] = [];
 
@@ -177,5 +182,23 @@ export class CommonService {
     const formattedUsername = normalizedUsername.toLowerCase().replace(/\s+/g, "-");
     return formattedUsername;
   }
+
+  cleanUrl(url: string): string {
+    if (!url) return '';
+
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+
+    const urlObj = new URL(url);
+    let hostname = urlObj.hostname;
+
+    if (!hostname.startsWith('www.')) {
+      hostname = 'www.' + hostname;
+    }
+
+    return `https://${hostname}${urlObj.pathname}${urlObj.search}${urlObj.hash}`;
+  }
+
 
 }

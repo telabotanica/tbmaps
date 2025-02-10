@@ -1,8 +1,7 @@
 import {
-  ApplicationRef,
-  Component, ComponentFactoryResolver, ComponentRef, ElementRef, inject,
-  Inject, Injector, NgZone,
-  Renderer2, ViewChild, ViewContainerRef
+  Component, inject,
+  Inject, NgZone,
+  Renderer2,
 } from '@angular/core';
 import {CommonModule, DOCUMENT, NgComponentOutlet} from '@angular/common';
 import {RouterOutlet} from '@angular/router';
@@ -17,7 +16,6 @@ import {environment} from "../environments/environment";
 import {NgxLeafletFullscreenModule} from "@runette/ngx-leaflet-fullscreen";
 import {EventPopupComponent} from "./components/popups/event-popup/event-popup.component";
 import {FormsModule} from "@angular/forms";
-// import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FilterComponent} from "./forms/filter/filter.component";
 import {Source} from "./models/Source";
 import {forkJoin, Observable} from "rxjs";
@@ -99,6 +97,7 @@ export class AppComponent{
   numNomRet!: string;
   auteur!: string;
   standard!: string;
+  obsLimit: string = "1000";
   params: any[] = []
 
   error!: string;
@@ -111,7 +110,6 @@ export class AppComponent{
   popupIsDisplayed = false;
   popupData!: any;
   popupOccurrences:any[] = [];
-  // @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
 
   userLoggedIn = false;
   userInfos : any;
@@ -121,7 +119,6 @@ export class AppComponent{
 
   private commonService = inject(CommonService)
   private dataService = inject(DataService)
-  // public dialog = inject(MatDialog);
   private renderer = inject(Renderer2);
   private zone = inject(NgZone)
   private titleService = inject(Title)
@@ -180,25 +177,29 @@ export class AppComponent{
         case 'url_site':
           this.url_site = param.value
           break;
-        case 'referentiel': //widget ne marche pas -> renvoie 0 results
+        case 'referentiel':
           this.referentiel = param.value
           this.sourceName = 'observations'
+          this.params.push(param)
           break;
         case 'annee':
-          this.annee = param.value
+          this.annee = param.value //TODO: convertir en date.debut et date.fin en unixtime
+          this.params.push(param)
           break;
-        case 'projet':// widget ne marche pas -> renvoie tout
+        case 'projet':
           this.projet = param.value
           this.sourceName = 'observations'
           this.params.push(param)
           break;
         case 'taxon':
           this.taxon = param.value
+          this.obsLimit = "2000"
           this.sourceName = 'observations'
           this.params.push(param)
           break;
-        case 'num_nom_ret': //widget ne marche pas -> renvoie tout
+        case 'num_nom_ret':
           this.numNomRet = param.value
+          this.obsLimit = "2000"
           this.sourceName = 'observations'
           this.params.push(param)
           break;
@@ -208,6 +209,19 @@ export class AppComponent{
           break;
         case 'standard':
           this.standard = param.value
+          this.sourceName = 'observations'
+          this.params.push(param)
+          break;
+        case 'masque':
+          this.sourceName = 'observations'
+          this.params.push(param)
+          break;
+        case 'famille':
+          this.sourceName = 'observations'
+          this.params.push(param)
+          break;
+        case 'navigation.limite':
+          this.obsLimit = param.value
           this.sourceName = 'observations'
           this.params.push(param)
           break;
@@ -262,21 +276,24 @@ export class AppComponent{
 
     const getEvents = this.dataService.getEvents();
     const getTrails = this.dataService.getTrails();
-    const getObservations = this.dataService.getObservations(19000, this.params);
+    const getObservations = this.dataService.getObservations(this.obsLimit, this.params);
 
     //Chargement des données
     forkJoin([getEvents, getTrails, getObservations]).subscribe((data: any) => {
       this.fillEvents(data[0])
       this.fillTrails(data[1])
+      // console.log(data[2])
 
-      let obs = data[2].images
-      let obsTotal = data[2].total;
-      let start = 19000;
-      let obsLimit = 100000
+      let obs = data[2].resultats
+      // let obsTotal = data[2].total;
+      // let start = 19000;
+      // let start = this.obsLimit;
 
+      // this.loadData(obs);
+/*
       const loadAdditionalObservationsRecursive = (total: number, start: number, obs: any[]) => {
         // Pour charger + d'obs que 19000 et jusqu'a la limite obsLimit
-        if (obs.length < obsTotal && obs.length < obsLimit) {
+        if (obs.length < obsTotal && obs.length < Number(this.obsLimit)) {
           this.loadAdditionalObservations(total, start).subscribe((additionalData: any) => {
             obs = obs.concat(additionalData.images);
             start += 19000;
@@ -287,43 +304,31 @@ export class AppComponent{
           this.loadData(obs)
         }
       };
+ */
 
       // Si on a le paramètre observations on va démarrer le chargement récursif
       // des observations supplémentaires afin d'afficher + d'obs
-      if (this.sourceName == 'observations' || this.numNomRet || this.referentiel || this.projet){
-        loadAdditionalObservationsRecursive(obsTotal, start, obs);
-      } else {
+      // if (this.sourceName == 'observations' || this.numNomRet || this.referentiel || this.projet){
+      //   loadAdditionalObservationsRecursive(obsTotal, start, obs);
+      // } else {
         this.loadData(obs)
-      }
+      // }
     })
   }
 
   // Fonction pour charger des observations supplémentaires
   loadAdditionalObservations(total: number, start: number): Observable<any> {
     if (start < 38000){
-      this.params.push({ name: 'start', value: start });
+      this.params.push({ name: 'navigation.debut', value: start });
     } else {
-      let startIndex = this.params.findIndex((e) => e.name == 'start')
+      let startIndex = this.params.findIndex((e) => e.name == 'navigation.debut')
       this.params[startIndex].value = start
     }
 
-    return this.dataService.getObservations(19000, this.params)
+    return this.dataService.getObservations(this.obsLimit, this.params);
   }
 
   loadData(obs: any[]){
-    // On filtre les résultats pour les paramètres qui ne maarchent pas -> TODO a supprimer une fois le widget corrigé ou l'appel à un meilleur widget
-    if (this.referentiel){
-      obs = obs.filter(entry => entry.obs && entry.obs.nom_referentiel === this.referentiel);
-    }
-
-    if (this.numNomRet){
-      obs = obs.filter(entry => entry.obs && entry.obs.nom_ret_nn === this.numNomRet);
-    }
-
-    if (this.projet){
-      obs = obs.filter(entry => entry.obs && entry.obs.projet === this.projet);
-    }
-
     this.fillObservations(obs);
     this.sources.forEach(source => {
       if (source.name === this.sourceName) {
@@ -422,49 +427,34 @@ export class AppComponent{
   fillObservations(data: any){
     this.sourceCategories = false;
 
-    const observationsGrouped = data.reduce((acc: any, image: any) => {
-      const idObs = image.obs.id_obs;
-      const cleanUrl = image.url_photo.split(',')[0];
-      const existingEntry = acc.find((entry: any) => entry.id === idObs);
-
-      // On transforme la liste des tags en array
-      let cleanTags = image.tags_photo ? image.tags_photo.split(/\s*,\s*/).filter(Boolean) : null;
-
-      if (existingEntry) {
-        existingEntry.images.push({ ...image, url_photo: cleanUrl, tags_photo: cleanTags });
-      } else {
-        acc.push({
-          id: idObs,
-          images: [{ ...image, url_photo: cleanUrl, tags_photo: cleanTags }]
-        });
-      }
-      return acc;
-    }, []);
-
-    this.observations = observationsGrouped.map((observation: any) => {
-      let fiabilite = Number(observation.images[0].obs.fiabilite) // données standard si >= 3
+    this.observations = data.map((observation: any) => {
+      let fiabilite = Number(observation.grade)
 
       return new Obs(
-        observation.id,
-        observation.images[0].obs.nom_referentiel,
-        observation.images[0].obs.nom_ret,
-        observation.images[0].obs.nom_ret_nn,
-        observation.images[0].obs.nom_sel,
-        observation.images[0].obs.nom_sel_nn,
-        observation.images[0].obs.famille,
-        observation.images[0].obs.observateur,
-        observation.images[0].obs.date_obs,
-        observation.images[0].obs.commentaire,
-        observation.images[0].obs.type_donnees,
-        observation.images[0].obs.milieu,
-        observation.images[0].obs.url_ip,
-        [observation.images[0].obs.latitude, observation.images[0].obs.longitude],
-        observation.images.map((image: any) => ({ ...image, url_photo: image.url_photo.split(',')[0] })),
-        observation.images[0].utilisateur,
+        observation.idObservation,
+        observation.referentiel,
+        observation.nomRet,
+        observation.nomRetNn,
+        observation.nomSel,
+        observation.nomSelNn,
+        observation.famille,
+        observation.observateur,
+        observation.dateModification,
+        observation.commentaire,
+        observation.typeDonnees,
+        observation.milieu,
+        observation.urlIdentiplante,
+        [observation.latitude, observation.longitude],
+        observation.images,
+        {
+          "id": observation.ceUtilisateur,
+          "nom_utilisateur": observation.pseudoUtilisateur,
+          "email": observation.courrielUtilisateur
+        },
         'assets/images/marker-icon-jaune.svg',
         'observations',
         'observations',
-        observation.images[0].obs.projet,
+        observation.programme,
         fiabilite
       );
     });
