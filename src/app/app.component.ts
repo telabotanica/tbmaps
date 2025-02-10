@@ -183,7 +183,8 @@ export class AppComponent{
           this.params.push(param)
           break;
         case 'annee':
-          this.annee = param.value //TODO: convertir en date.debut et date.fin en unixtime
+          this.annee = param.value
+          this.obsLimit = "15000"
           this.params.push(param)
           break;
         case 'projet':
@@ -193,13 +194,13 @@ export class AppComponent{
           break;
         case 'taxon':
           this.taxon = param.value
-          this.obsLimit = "2000"
+          this.obsLimit = "15000"
           this.sourceName = 'observations'
           this.params.push(param)
           break;
         case 'num_nom_ret':
           this.numNomRet = param.value
-          this.obsLimit = "2000"
+          this.obsLimit = "15000"
           this.sourceName = 'observations'
           this.params.push(param)
           break;
