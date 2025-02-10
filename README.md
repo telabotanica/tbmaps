@@ -38,7 +38,9 @@ You will need to copy the content of the `dist/tbmaps-angular/browser` on your s
 
 To add some more custom parameters you will have to extend the app see **Extend** section below.
 
-## Extend
+## Extend for Observations
+
+Display public observations with pictures on the map
 
 **List of parameters you can use to filter observations** :
 
@@ -47,7 +49,13 @@ To add some more custom parameters you will have to extend the app see **Extend*
 - `taxon` : filter by taxon selected name
 - `num_nom_ret` : filter by taxon id number
 - `auteur` : filter by user (id or user e-mail)
-- `standard` : `0` for non_standard data (`1` by default if parameter is missing)
+- `standard` : `0` for all data, including non_standard data (`1` by default if parameter is missing)
+- `famille` : filter by taxon family
+- `projet` : filter by project
+- `auteur` : filter by author pseudo, email or id
+- `annee` : filter by observation modification date
+- `masque` : filter by taxon, family, user email, or user pseudo
+- `navigation.limite` : setup the maximum number of observations to display (1000 by default)
 
 ## Running unit tests
 

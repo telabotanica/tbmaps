@@ -12,7 +12,7 @@
         {{data.referentiel}}</a>
         <h2 id="events-title"><a title="{{data.nomSel}}" [innerHTML]="data.nomSel"></a></h2>
       }
-      <p>Famille: <i>{{data.famille}}</i></p>
+      @if(data.famille){<p>Famille: <i>{{data.famille}}</i></p>}
     </div>
 
     <div class="events-info">
@@ -48,16 +48,15 @@
 
     <h2 class="events-info-title"><span>Les photos</span></h2>
     <div class="popup-photos-section">
-      @for (image of data.image; track image.id_photo){
-      <div class="events-contact-image popup-photos" style="background-image: url({{image.url_photo}}
-      );background-size:cover"></div>
+      @for (image of data.image; track image.id_image){
+        <div class="events-contact-image popup-photos" style="background-image: url({{image.url}}
+        );background-size:cover"></div>
       }
     </div>
 
     <div class="events-contact obs-popup-ip-section">
       <p>Une erreur de détermination ?</p>
-      <a href="https://{{data.urlIp}}" target="_blank" title="Lien vers Identiplante">Aidez à l'identification grâce à
-        Identiplante</a>
+      <a href="{{cleanIpUrl}}" target="_blank" title="Lien vers Identiplante">Aidez à l'identification grâce à Identiplante</a>
     </div>
 
   </div>
