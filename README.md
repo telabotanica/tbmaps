@@ -46,14 +46,14 @@ Display public observations with pictures on the map
 
 - `referentiel` : filter by taxon referentiel
 - `projet` : filter by project
-- `taxon` : filter by taxon selected name
-- `num_nom_ret` : filter by taxon id number
+- `taxon` : filter by taxon selected name (default navigation.limite of 15000)
+- `num_nom_ret` : filter by taxon id number (default navigation.limite of 15000)
 - `auteur` : filter by user (id or user e-mail)
 - `standard` : `0` for all data, including non_standard data (`1` by default if parameter is missing)
 - `famille` : filter by taxon family
 - `projet` : filter by project
 - `auteur` : filter by author pseudo, email or id
-- `annee` : filter by observation modification date
+- `annee` : filter by observation modification date (default navigation.limite of 15000)
 - `masque` : filter by taxon, family, user email, or user pseudo
 - `navigation.limite` : setup the maximum number of observations to display (1000 by default)
 
