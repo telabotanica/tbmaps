@@ -62,14 +62,36 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
-              ]
+              ],
+              "outputPath": "dist/tbmaps-angular/production"
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
             },
-
+            "beta": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2500kB",
+                  "maximumError": "5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kB",
+                  "maximumError": "4kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.beta.ts"
+                }
+              ],
+              "outputPath": "dist/tbmaps-angular/beta"
+            }
           },
           "defaultConfiguration": "production"
         },
@@ -81,6 +103,9 @@
             },
             "development": {
               "buildTarget": "tbmaps-angular:build:development"
+            },
+            "beta": {
+              "buildTarget": "tbmaps-angular:build:beta"
             }
           },
           "defaultConfiguration": "development"
