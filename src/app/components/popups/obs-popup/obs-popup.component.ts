@@ -2,17 +2,15 @@ import {Component, EventEmitter, inject, Inject, Input, Output} from '@angular/c
 import {CommonService} from "../../../services/common.service";
 import {CommonModule} from "@angular/common";
 import {environment} from "../../../../environments/environment";
-// import {Util} from "leaflet";
-// import trim = Util.trim;
 
 @Component({
-  selector: 'app-obs-popup',
-  standalone: true,
-  imports: [
-    CommonModule
-  ],
-  templateUrl: './obs-popup.component.html',
-  styleUrl: './obs-popup.component.css'
+    selector: 'app-obs-popup',
+    imports: [
+        CommonModule
+    ],
+    templateUrl: './obs-popup.component.html',
+    styleUrl: './obs-popup.component.css',
+    standalone: true
 })
 export class ObsPopupComponent {
 

@@ -9,7 +9,7 @@ Designed for integration in an iframe.
 
 ## Install
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3, updated to version 19.2.17.
 
 - `npm i`
 
@@ -26,6 +26,8 @@ Run `ng generate component component-name` to generate a new component. You can 
 Run `ng build --configuration production --base-href=/tbmaps/` to build the project on production server. The build artifacts will be stored in the `dist/` directory.
 
 You will need to copy the content of the `dist/tbmaps-angular/browser` on your server
+
+Or authorize ssh connection and create a script `./deploy.sh production` (`./deploy.sh beta` for test server)
 
 ## Usage
 

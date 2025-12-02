@@ -7,8 +7,8 @@ import {CommonModule, DOCUMENT, NgComponentOutlet} from '@angular/common';
 import {RouterOutlet} from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
-import {MarkerClusterGroup, markerClusterGroup } from 'leaflet';
-import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import {MarkerClusterGroup } from 'leaflet';
+import { LeafletModule } from '@bluehalo/ngx-leaflet';
 import {DataService} from "./services/data.service";
 import {CommonService} from "./services/common.service";
 import {Event} from "./models/Event";
@@ -22,30 +22,29 @@ import {forkJoin, Observable} from "rxjs";
 import {Trail} from "./models/Trail";
 import {TrailPopupComponent} from "./components/popups/trail-popup/trail-popup.component";
 import {Title} from "@angular/platform-browser";
-import {LeafletMarkerClusterModule} from "@asymmetrik/ngx-leaflet-markercluster";
+import {LeafletMarkerClusterModule} from "@bluehalo/ngx-leaflet-markercluster";
 import {Obs} from "./models/Obs";
 import {ObsPopupComponent} from "./components/popups/obs-popup/obs-popup.component";
 import {CookiesService} from "./services/cookies.service";
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterOutlet,
-    LeafletModule,
-    NgxLeafletFullscreenModule,
-    FormsModule,
-    EventPopupComponent,
-    NgComponentOutlet,
-    FilterComponent,
-    CommonModule,
-    LeafletMarkerClusterModule,
-    TrailPopupComponent,
-    ObsPopupComponent
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+    selector: 'app-root',
+    imports: [
+        CommonModule,
+        RouterOutlet,
+        LeafletModule,
+        NgxLeafletFullscreenModule,
+        FormsModule,
+        EventPopupComponent,
+        FilterComponent,
+        CommonModule,
+        LeafletMarkerClusterModule,
+        TrailPopupComponent,
+        ObsPopupComponent
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.css',
+    standalone: true
 })
 export class AppComponent{
   baseUrlSite = environment.baseUrlSite;

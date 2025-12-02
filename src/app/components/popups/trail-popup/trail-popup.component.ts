@@ -1,11 +1,11 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
-  selector: 'app-trail-popup',
-  standalone: true,
-  imports: [],
-  templateUrl: './trail-popup.component.html',
-  styleUrl: './trail-popup.component.css'
+    selector: 'app-trail-popup',
+    imports: [],
+    templateUrl: './trail-popup.component.html',
+    styleUrl: './trail-popup.component.css',
+    standalone: true
 })
 export class TrailPopupComponent {
   @Input() occurrences!: any[]
