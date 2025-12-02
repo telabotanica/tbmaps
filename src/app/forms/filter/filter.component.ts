@@ -1,12 +1,9 @@
 import {Component, EventEmitter, Input, input, Output} from '@angular/core';
 import {Source} from "../../models/Source";
-import {CommonModule} from "@angular/common";
 
 @Component({
     selector: 'app-filter',
-    imports: [
-        CommonModule
-    ],
+    imports: [],
     templateUrl: './filter.component.html',
     styleUrl: './filter.component.css',
     standalone: true

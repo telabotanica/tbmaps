@@ -2,8 +2,8 @@ import {
   Component, inject,
   Inject, NgZone,
   Renderer2,
+  DOCUMENT
 } from '@angular/core';
-import {CommonModule, DOCUMENT, NgComponentOutlet} from '@angular/common';
 import {RouterOutlet} from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
@@ -30,18 +30,16 @@ import {CookiesService} from "./services/cookies.service";
 @Component({
     selector: 'app-root',
     imports: [
-        CommonModule,
-        RouterOutlet,
-        LeafletModule,
-        NgxLeafletFullscreenModule,
-        FormsModule,
-        EventPopupComponent,
-        FilterComponent,
-        CommonModule,
-        LeafletMarkerClusterModule,
-        TrailPopupComponent,
-        ObsPopupComponent
-    ],
+    RouterOutlet,
+    LeafletModule,
+    NgxLeafletFullscreenModule,
+    FormsModule,
+    EventPopupComponent,
+    FilterComponent,
+    LeafletMarkerClusterModule,
+    TrailPopupComponent,
+    ObsPopupComponent
+],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
     standalone: true
@@ -693,7 +691,7 @@ export class AppComponent{
   }
 
   mapClicked($event: any) {
-    console.log($event.latlng.lat, $event.latlng.lng);
+    // console.log($event.latlng.lat, $event.latlng.lng);
   }
 
 }

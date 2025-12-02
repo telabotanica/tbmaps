@@ -1,13 +1,10 @@
 import {Component, EventEmitter, inject, Inject, Input, Output} from '@angular/core';
 import {CommonService} from "../../../services/common.service";
-import {CommonModule} from "@angular/common";
 import {environment} from "../../../../environments/environment";
 
 @Component({
     selector: 'app-obs-popup',
-    imports: [
-        CommonModule
-    ],
+    imports: [],
     templateUrl: './obs-popup.component.html',
     styleUrl: './obs-popup.component.css',
     standalone: true

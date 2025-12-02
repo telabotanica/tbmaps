@@ -4,7 +4,7 @@
       <button id="close-popup" (click)="close()">x</button>
       @if(data.referentiel != 'Autre/inconnu' && data.referentiel != 'taxref'){
         <a class="events-category-label" href="https://www.tela-botanica.org/eflore?referentiel={{data.referentiel}}"
-           rel="category" title="{{data.referentiel}}" target="_blank">
+          rel="category" title="{{data.referentiel}}" target="_blank">
         {{data.referentiel}}</a>
         <h2 id="events-title"><a href="https://www.tela-botanica.org/{{data.referentiel}}-nn-{{data.nomRetNn}}" title="{{data.nomSel}}" target="_blank" [innerHTML]="data.nomSel"></a></h2>
       } @else {
@@ -21,27 +21,28 @@
       <dl class="events-info-items">
         <dt class="events-info-item-title">Observée par</dt>
 
-        <ng-container *ngIf="data.utilisateur?.nom_utilisateur; else noUser">
+        @if (data.utilisateur?.nom_utilisateur) {
           <a href="{{ profilLink }}" target="_blank" class="events-info-item-text" [innerHTML]="displayedName"></a>
-        </ng-container>
-        <ng-template #noUser>
+        } @else {
           <dd class="events-info-item-text" [innerHTML]="displayedName"></dd>
-        </ng-template>
+        }
 
         <dt class="events-info-item-title">Date de l'observation</dt>
-        <dd *ngIf="formattedDate != null" class="events-info-item-text">
+        @if (formattedDate != null) {
+          <dd class="events-info-item-text">
           Le {{formattedDate[0]}} {{formattedDate[1]}} {{formattedDate[2]}}</dd>
+        }
         <dt class="events-info-item-title">Type d'observation</dt>
         <dd class="events-info-item-text">{{data.typeDonnees}}</dd>
 
         @if (data.milieu){
-        <dt class="events-info-item-title">Milieu</dt>
-        <dd class="events-info-item-text">{{data.milieu}}</dd>
+          <dt class="events-info-item-title">Milieu</dt>
+          <dd class="events-info-item-text">{{data.milieu}}</dd>
         }
 
         @if(data.commentaire){
-        <dt class="events-info-item-title">Commentaire</dt>
-        <dd class="events-info-item-text">{{data.commentaire}}</dd>
+          <dt class="events-info-item-title">Commentaire</dt>
+          <dd class="events-info-item-text">{{data.commentaire}}</dd>
         }
       </dl>
     </div>
