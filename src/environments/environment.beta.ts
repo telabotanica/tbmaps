@@ -3,21 +3,14 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
+  production: true,
   baseUrlSite: 'https://beta.tela-botanica.org/',
   baseURLServicesCelTpl: 'https://api-test.tela-botanica.org/service:cel:CelWidgetMapPoint/stations',
   celUrlImages: 'https://api-test.tela-botanica.org/service:cel:CelWidgetImage/*',
   delUrlObs: 'https://api-test.tela-botanica.org/service:del:0.1/observations',
   membersProfil: 'https://beta.tela-botanica.org/test/membres/',
   cookieName: 'tb_auth_beta_test',
-  celExportUrl: 'https://api-cel-test.tela-botanica.org/api/export_totals',
-  // baseUrlSite: 'https://www.tela-botanica.org/',
-  // baseURLServicesCelTpl: 'https://api.tela-botanica.org/service:cel:CelWidgetMapPoint/stations',
-  // celUrlImages: 'https://api.tela-botanica.org/service:cel:CelWidgetImage/*',
-  // delUrlObs: 'https://api.tela-botanica.org/service:del:0.1/observations',
-  // membersProfil: 'https://www.tela-botanica.org/membres/',
-  // cookieName: 'tb_auth',
-  // celExportUrl: 'https://api-cel.tela-botanica.org/api/export_totals',
+  celExportUrl: 'https://api-cel-test.tela-botanica.org/api/export_totals'
 };
 
 /*
