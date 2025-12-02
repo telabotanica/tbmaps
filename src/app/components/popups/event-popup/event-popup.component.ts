@@ -6,11 +6,11 @@ import {
 import {CommonService} from "../../../services/common.service";
 
 @Component({
-  selector: 'app-event-popup',
-  standalone: true,
-  imports: [],
-  templateUrl: './event-popup.component.html',
-  styleUrl: './event-popup.component.css'
+    selector: 'app-event-popup',
+    imports: [],
+    templateUrl: './event-popup.component.html',
+    styleUrl: './event-popup.component.css',
+    standalone: true
 })
 export class EventPopupComponent{
   eventDates = '';
