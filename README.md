@@ -59,6 +59,12 @@ Display public observations with pictures on the map
 - `masque` : filter by taxon, family, user email, or user pseudo
 - `navigation.limite` : setup the maximum number of observations to display (1000 by default)
 
+**Example** :
+
+Display observation of Senecio Vulgaris (taxon id 63096) from the Sauvages De Ma Rue project :
+
+https://www.tela-botanica.org/tbmaps/?sources=observations&projet=sauvages&standard=0&referentiel=bdtfx&num_nom_ret=63096
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
