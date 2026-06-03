@@ -571,7 +571,8 @@ export class AppComponent{
     this.zone.run(()=>{
       if (this.sourceName == 'sentiers'){
         this.popupOccurrences = []
-        this.dataService.getTrailDetails(markerData.details).subscribe((trailDetails: any) => {
+        const trailUrl = this.baseUrlSite + 'smartflore-services/trail/' + markerData.id
+        this.dataService.getTrailDetails(trailUrl).subscribe((trailDetails: any) => {
           trailDetails.occurrences.forEach((occurrence: any) => {
 
             let taxon = {
