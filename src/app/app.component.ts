@@ -395,22 +395,24 @@ export class AppComponent{
     this.sourceCategories = false;
 
     data.forEach((trail: any)=>{
-      let trailPostData = new Trail(
-        trail.id,
-        trail.name,
-        trail.display_name,
-        [trail.position.start.lat, trail.position.start.lng],
-        trail.author,
-        trail.details,
-        trail.image,
-        trail.occurrences_count,
-        trail.path_length,
-        'assets/images/marker-icon-kaki.svg',
-        'trails',
-        'sentiers'
-      )
+      if (trail.position?.start?.lat && trail.position?.start?.lng) {
+        const trailPostData = new Trail(
+          trail.id,
+          trail.name,
+          trail.display_name,
+          [trail.position.start.lat, trail.position.start.lng],
+          trail.author,
+          trail.details,
+          trail.image,
+          trail.occurrences_count,
+          trail.path_length,
+          'assets/images/marker-icon-kaki.svg',
+          'trails',
+          'sentiers'
+        )
 
-      this.trails.push(trailPostData)
+        this.trails.push(trailPostData)
+      }
     })
 
     // Afficher seulement des sentiers validés de l'utilisateur
