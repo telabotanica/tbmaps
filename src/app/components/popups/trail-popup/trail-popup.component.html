@@ -3,7 +3,7 @@
     <div id="events" style="overflow:auto;">
       <button id="close-popup" (click)="close()">x</button>
       <a class="events-category-label" href="https://www.tela-botanica.org/smart-form/trail/{{data.id}}" rel="category" title="{{data.display_name}}" target="_blank">Sentier Smart'Flore</a>
-      <h2 id="events-title"><span [innerHTML]="data.name"></span></h2>
+      <h2 id="events-title"><a href="https://www.tela-botanica.org/smart-form/trail/{{data.id}}" target="_blank" [innerHTML]="data.name"></a></h2>
 
       @if(data.image){
         <div class="events-contact-image" style="background-image: url({{data.image?.url}});background-size:cover"></div>
