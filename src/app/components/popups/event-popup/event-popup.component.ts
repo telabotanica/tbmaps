@@ -1,7 +1,8 @@
 import {
   Component, EventEmitter,
   inject,
-  Input, Output
+  Input, Output,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {CommonService} from "../../../services/common.service";
 
@@ -10,6 +11,7 @@ import {CommonService} from "../../../services/common.service";
     imports: [],
     templateUrl: './event-popup.component.html',
     styleUrl: './event-popup.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: true
 })
 export class EventPopupComponent{

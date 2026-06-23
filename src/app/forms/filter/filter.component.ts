@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, input, Output, ChangeDetectionStrategy} from '@angular/core';
 import {Source} from "../../models/Source";
 
 @Component({
@@ -6,6 +6,7 @@ import {Source} from "../../models/Source";
     imports: [],
     templateUrl: './filter.component.html',
     styleUrl: './filter.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: true
 })
 export class FilterComponent {

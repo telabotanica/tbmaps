@@ -2,7 +2,8 @@ import {
   Component, inject,
   Inject, NgZone,
   Renderer2,
-  DOCUMENT
+  DOCUMENT,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import * as L from 'leaflet';
@@ -42,6 +43,7 @@ import {CookiesService} from "./services/cookies.service";
 ],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: true
 })
 export class AppComponent{

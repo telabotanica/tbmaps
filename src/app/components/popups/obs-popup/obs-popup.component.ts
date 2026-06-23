@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Inject, Input, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Inject, Input, Output, ChangeDetectionStrategy} from '@angular/core';
 import {CommonService} from "../../../services/common.service";
 import {environment} from "../../../../environments/environment";
 
@@ -7,6 +7,7 @@ import {environment} from "../../../../environments/environment";
     imports: [],
     templateUrl: './obs-popup.component.html',
     styleUrl: './obs-popup.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: true
 })
 export class ObsPopupComponent {
